@@ -16,7 +16,7 @@ st.set_page_config(
 
 # --- Titolo e Informazioni Autore ---
 st.title("Valutazione ADHD - Test Autosomministrati")
-st.caption('Creata dal Dott. Marco Manzo')
+st.caption('Creata dal Dott. Marco Manzo, Specialista in Psichiatria, Ph.D. Candidate')
 st.caption('_Department of Psychiatry, University of Campania "Luigi Vanvitelli", Naples, Italy_')
 
 # --- Introduzione per il Paziente ---
