@@ -4,29 +4,26 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-# Importa le funzioni dal file calcolatore_test.py
+# Assicurati che il file calcolatore_test.py sia nella stessa cartella
 from calcolatore_test import calcola_tutti_i_risultati, formatta_risultati_email
 
-# --- Configurazione della Pagina ---
 st.set_page_config(
     page_title="Valutazione ADHD - Test Autosomministrati",
     page_icon="🧠",
     layout="wide"
 )
 
-# --- Titolo e Informazioni Autore ---
-st.title("Valutazione ADHD - Test Autosomministrati")
-st.caption('Creata dal Dott. Marco Manzo, Specialista in Psichiatria, Ph.D. Candidate')
+# TITOLO DI PROVA PER VERIFICA
+st.title("--- VERSIONE DI TEST DEFINITIVA ---")
+st.caption('Creata dal Dott. Marco Manzo')
 st.caption('_Department of Psychiatry, University of Campania "Luigi Vanvitelli", Naples, Italy_')
 
-# --- Introduzione per il Paziente ---
 st.write("""
 Benvenuto/a. Questa applicazione ti guiderà attraverso una serie di questionari.
 Per favore, compila i campi seguenti e rispondi alle domande dei test che ti sono stati indicati.
 Non è necessario compilarli tutti.
 """)
 
-# --- Sezione Dati Demografici ---
 with st.expander("1. Dati del Paziente", expanded=True):
     col1, col2 = st.columns(2)
     with col1:
@@ -44,26 +41,23 @@ with st.expander("1. Dati del Paziente", expanded=True):
 
 st.divider()
 
-# --- Inizializzazione dello stato per le risposte e i test compilati ---
 if 'risposte' not in st.session_state:
     st.session_state.risposte = {
-        'asrs': [0] * 18, 'wurs': [0] * 61, 'temps_a': [1] * 110,
-        'bis11': [1] * 30, 'tas20': [3] * 20, 'mdq': {'parte1': [False] * 13, 'parte2': False, 'parte3': 1},
+        'asrs': [0] * 18, 'wurs': [0] * 61, 'wurs_extra_testo': "", 'temps_a': [1] * 110,
+        'bis11': [1] * 30, 'tas20': [3] * 20, 'mdq': {'gate': False, 'parte1': [False] * 13, 'parte2': False, 'parte3': 1},
         'hcl34': [False] * 34, 'ders': [3] * 36, 'mews': [0] * 12,
         'stai_y2': [1] * 20, 'stai_y1': [1] * 20
     }
 if 'test_compilati' not in st.session_state:
     st.session_state.test_compilati = set()
 
-# --- Funzione per tracciare i test compilati ---
 def on_change_test(test_name):
     st.session_state.test_compilati.add(test_name)
 
-# --- Sezione Questionari ---
 st.header("2. Questionari")
 st.info("Apri e compila solo i questionari che ti sono stati indicati dallo specialista.")
 
-# --- ASRS-v1.1 ---
+# --- ASRS ---
 with st.expander("Questionario ASRS-v1.1"):
     st.info("Le seguenti domande si riferiscono a come ti sei sentito/a e comportato/a negli **ultimi 6 mesi**.")
     domande_asrs = [
@@ -112,7 +106,7 @@ with st.expander("Questionario WURS"):
         "27. Perdita dell'autocontrollo", "28. Tendenza a essere o ad agire irrazionalmente",
         "29. Impopolare con gli altri bambini, non mantenere a lungo le amicizie", "30. Scarso coordinamento motorio, non partecipare a sport",
         "31. Paura di perdere l'autocontrollo", "32. Buona coordinazione motoria, scelto per primo nei giochi di squadra",
-        "33. [solo per donne:] maschiaccio", "34. Scappato di casa",
+        "33. [Solo per donne:] maschiaccio", "34. Scappato di casa",
         "35. Coinvolto in risse", "36. Prendere in giro gli altri bambini",
         "37. Leader, autoritario", "38. Difficoltà a svegliarsi la mattina",
         "39. Seguire gli altri, lasciarsi trascinare dagli altri", "40. Problemi ad assumere il punto di vista di qualcun altro",
@@ -125,15 +119,21 @@ with st.expander("Questionario WURS"):
         "53. Lento a leggere", "54. Difficoltà per il fatto di scambiare le lettere",
         "55. Problemi a sillabare", "56. Problemi con calcoli e numeri",
         "57. Una brutta scrittura", "58. Nonostante leggevo bene non mi è mai piaciuto",
-        "59. Non ho sfruttato a pieno le mie potenzialità", "60. Ho dovuto ripetere delle classi [quali classi?]",
-        "61. Sospeso o espulso [in quali classi?]"
+        "59. Non ho sfruttato a pieno le mie potenzialità", "60. Ho dovuto ripetere delle classi",
+        "61. Sospeso o espulso"
     ]
     opzioni_wurs = ["Per niente o solo marginalmente", "Lievemente", "Moderatamente", "Decisamente", "Molto intensamente"]
     for i, domanda in enumerate(domande_wurs):
+        if i == 32 and genere == "Maschio":
+            st.session_state.risposte['wurs'][i] = 0
+            continue
+        
         st.session_state.risposte['wurs'][i] = st.select_slider(
             domanda, options=range(len(opzioni_wurs)), format_func=lambda x: opzioni_wurs[x],
             key=f"wurs_{i}", on_change=on_change_test, args=('wurs',)
         )
+        if i == 60:
+             st.session_state.risposte['wurs_extra_testo'] = st.text_input("Specificare (se applicabile)", key="wurs_extra")
 
 # --- TEMPS-A ---
 with st.expander("Questionario TEMPS-A"):
@@ -194,6 +194,9 @@ with st.expander("Questionario TEMPS-A"):
     ]
     opzioni_temps_a = {1: "Falso", 2: "Vero"}
     for i, domanda in enumerate(domande_temps_a):
+        if i == 83 and genere == "Maschio":
+            st.session_state.risposte['temps_a'][i] = 1
+            continue
         st.session_state.risposte['temps_a'][i] = st.radio(
             domanda, options=[1, 2], format_func=lambda x: opzioni_temps_a[x],
             key=f"temps_a_{i}", horizontal=True, on_change=on_change_test, args=('temps_a',)
@@ -221,7 +224,6 @@ with st.expander("Questionario BIS-11"):
             domanda, options=range(1, 5), format_func=lambda x: opzioni_bis11[x-1],
             key=f"bis11_{i}", horizontal=True, on_change=on_change_test, args=('bis11',)
         )
-
 # --- TAS-20 ---
 with st.expander("Questionario TAS-20"):
     st.info("Indica quanto sei d’accordo o in disaccordo con ciascuna delle seguenti affermazioni.")
@@ -246,38 +248,48 @@ with st.expander("Questionario TAS-20"):
 
 # --- MDQ ---
 with st.expander("Questionario MDQ (Mood Disorder Questionnaire)"):
-    st.info("Rispondi 'Sì' o 'No' alle seguenti domande, pensando a periodi di tempo in cui non ti sentivi come al tuo solito.")
-    st.subheader("Parte 1: Sintomi")
-    domande_mdq_p1 = [
-        "1. ...ti sentivi così bene o così 'su' che gli altri hanno pensato che tu non fossi come al solito o che fossi talmente 'su' da poterti trovare in qualche guaio?",
-        "2. ...eri talmente irritabile da urlare contro altre persone o provocare un litigio o uno scontro fisico?",
-        "3. ...ti sentivi molto più sicuro di te del solito?",
-        "4. ...dormivi molto meno del normale e ti sembrava di non sentire la necessità di dormire?",
-        "5. ...eri più loquace e parlavi più velocemente del solito?",
-        "6. ...i pensieri ti attraversavano velocemente la testa o non riuscivi a rilassarti?",
-        "7. ...eri così facilmente distraibile dalle cose intorno a te da avere difficoltà nel concentrarti e nel mantenere l'attenzione?",
-        "8. ...avevi molta più energia del solito?",
-        "9. ...eri molto più attivo e facevi molte più cose del solito?",
-        "10. ...eri molto più socievole ed espansivo del solito, per esempio telefonavi agli amici nel mezzo della notte?",
-        "11. ...eri molto più interessato al sesso del solito?",
-        "12. ...facevi delle cose per te inusuali o che gli altri avrebbero potuto considerare eccessive, stupide o rischiose?",
-        "13. ...spendevi così tanti soldi da creare delle difficoltà a te o alla tua famiglia?"
-    ]
-    for i, domanda in enumerate(domande_mdq_p1):
-        risposta = st.radio(domanda, options=["No", "Sì"], key=f"mdq_p1_{i}", horizontal=True, on_change=on_change_test, args=('mdq',))
-        st.session_state.risposte['mdq']['parte1'][i] = (risposta == "Sì")
-    st.subheader("Parte 2: Simultaneità")
-    risposta_p2 = st.radio(
-        "Se hai risposto 'Sì' ad una o più delle domande poste sopra, molte di queste situazioni si sono verificate durante lo stesso periodo di tempo?",
-        options=["No", "Sì"], key="mdq_p2", horizontal=True, on_change=on_change_test, args=('mdq',)
+    risposta_gate = st.radio(
+        "**C'è mai stato un periodo di tempo durante il quale non ti sentivi come al tuo solito e...**",
+        options=["No", "Sì"], key="mdq_gate", horizontal=True,
+        help="Se rispondi 'Sì', appariranno le domande successive."
     )
-    st.session_state.risposte['mdq']['parte2'] = (risposta_p2 == "Sì")
-    st.subheader("Parte 3: Compromissione")
-    opzioni_p3 = {1: "Nessun problema", 2: "Problemi di lieve entità", 3: "Problemi di moderata entità", 4: "Problemi gravi"}
-    st.session_state.risposte['mdq']['parte3'] = st.radio(
-        "In che misura qualcuna di queste situazioni ti ha creato problemi (es. incapacità a lavorare, problemi familiari, economici o legali, litigi o scontri fisici)?",
-        options=opzioni_p3.keys(), format_func=lambda x: opzioni_p3[x], key="mdq_p3", on_change=on_change_test, args=('mdq',)
-    )
+    st.session_state.risposte['mdq']['gate'] = (risposta_gate == "Sì")
+
+    if st.session_state.risposte['mdq']['gate']:
+        on_change_test('mdq')
+        st.subheader("Parte 1: Sintomi")
+        domande_mdq_p1 = [
+            "...ti sentivi così bene o così 'su' che gli altri hanno pensato che tu non fossi come al solito o che fossi talmente 'su' da poterti trovare in qualche guaio?",
+            "...eri talmente irritabile da urlare contro altre persone o provocare un litigio o uno scontro fisico?",
+            "...ti sentivi molto più sicuro di te del solito?",
+            "...dormivi molto meno del normale e ti sembrava di non sentire la necessità di dormire?",
+            "...eri più loquace e parlavi più velocemente del solito?",
+            "...i pensieri ti attraversavano velocemente la testa o non riuscivi a rilassarti?",
+            "...eri così facilmente distraibile dalle cose intorno a te da avere difficoltà nel concentrarti e nel mantenere l'attenzione?",
+            "...avevi molta più energia del solito?",
+            "...eri molto più attivo e facevi molte più cose del solito?",
+            "...eri molto più socievole ed espansivo del solito, per esempio telefonavi agli amici nel mezzo della notte?",
+            "...eri molto più interessato al sesso del solito?",
+            "...facevi delle cose per te inusuali o che gli altri avrebbero potuto considerare eccessive, stupide o rischiose?",
+            "...spendevi così tanti soldi da creare delle difficoltà a te o alla tua famiglia?"
+        ]
+        for i, domanda in enumerate(domande_mdq_p1):
+            risposta = st.radio(domanda, options=["No", "Sì"], key=f"mdq_p1_{i}", horizontal=True)
+            st.session_state.risposte['mdq']['parte1'][i] = (risposta == "Sì")
+        
+        st.subheader("Parte 2: Simultaneità")
+        risposta_p2 = st.radio(
+            "Se hai risposto 'Sì' ad una o più delle domande poste sopra, molte di queste situazioni si sono verificate durante lo stesso periodo di tempo?",
+            options=["No", "Sì"], key="mdq_p2", horizontal=True
+        )
+        st.session_state.risposte['mdq']['parte2'] = (risposta_p2 == "Sì")
+
+        st.subheader("Parte 3: Compromissione")
+        opzioni_p3 = {1: "Nessun problema", 2: "Problemi di lieve entità", 3: "Problemi di moderata entità", 4: "Problemi gravi"}
+        st.session_state.risposte['mdq']['parte3'] = st.radio(
+            "In che misura qualcuna di queste situazioni ti ha creato problemi (es. incapacità a lavorare, problemi familiari, economici o legali, litigi o scontri fisici)?",
+            options=opzioni_p3.keys(), format_func=lambda x: opzioni_p3[x], key="mdq_p3"
+        )
 
 # --- HCL-34 ---
 with st.expander("Questionario HCL-34 (Hypomania Checklist)"):
@@ -330,7 +342,6 @@ with st.expander("Questionario DERS (Difficulties in Emotion Regulation Scale)")
             domanda, options=range(1, 6), format_func=lambda x: f"{x} - {opzioni_ders[x-1]}",
             key=f"ders_{i}", on_change=on_change_test, args=('ders',)
         )
-
 # --- MEWS ---
 with st.expander("Questionario MEWS (Modified Engulfment With-Symptoms Scale)"):
     st.info("Quanto sono comuni per Voi queste affermazioni?")
@@ -392,7 +403,6 @@ st.header("3. Invia i risultati")
 st.info("Una volta completati i questionari indicati, clicca il pulsante qui sotto per inviare le tue risposte in modo sicuro allo specialista.")
 
 if st.button("Invia i risultati in modo sicuro", type="primary", use_container_width=True):
-    # Validazione
     if not codice_paziente or codice_paziente.strip() == "":
         st.error("⚠️ **Errore:** Per favore, inserisci il 'Codice Paziente' che ti è stato fornito prima di inviare.")
     elif not st.session_state.test_compilati:
@@ -400,19 +410,15 @@ if st.button("Invia i risultati in modo sicuro", type="primary", use_container_w
     else:
         with st.spinner("Calcolo dei risultati e invio in corso... Per favore, attendi."):
             try:
-                # 1. Raccogliere i dati
                 dati_paziente = {
                     "codice_paziente": codice_paziente, "data_nascita": data_nascita,
                     "genere": genere, "livello_istruzione": livello_istruzione
                 }
                 
-                # 2. Calcolare i risultati solo per i test compilati
-                risultati_completi = calcola_tutti_i_risultati(st.session_state.risposte, st.session_state.test_compilati)
+                risultati_completi = calcola_tutti_i_risultati(st.session_state.risposte, st.session_state.test_compilati, dati_paziente['genere'])
                 
-                # 3. Formattare l'email
-                corpo_email = formatta_risultati_email(dati_paziente, risultati_completi)
+                corpo_email = formatta_risultati_email(dati_paziente, risultati_completi, st.session_state.risposte['wurs_extra_testo'])
                 
-                # 4. Inviare l'email
                 email_mittente = st.secrets["email_mittente"]
                 password_app = st.secrets["password_app"]
                 email_destinatario = st.secrets["email_destinatario"]
@@ -429,11 +435,9 @@ if st.button("Invia i risultati in modo sicuro", type="primary", use_container_w
                 server.sendmail(email_mittente, email_destinatario, msg.as_string())
                 server.quit()
 
-                # 5. Mostrare messaggio di successo
                 st.success("✔️ **Invio completato con successo!**")
                 st.info("Grazie per aver completato i questionari. Ora puoi chiudere questa pagina.")
                 st.balloons()
-                # Resetta i test compilati per la sessione successiva
                 st.session_state.test_compilati = set()
 
             except Exception as e:

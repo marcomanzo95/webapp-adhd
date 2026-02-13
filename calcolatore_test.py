@@ -8,27 +8,48 @@ def calcola_asrs(risposte_parte_a):
         risultato = "Negativo"
     return {'risultato': risultato, 'punteggio_positivo': punteggio_positivo}
 
-def calcola_wurs(risposte):
+def calcola_wurs(risposte, genere_paziente):
     item_da_sommare = [3, 4, 5, 6, 7, 9, 10, 11, 12, 15, 16, 17, 20, 21, 24, 25, 26, 27, 28, 29, 40, 41, 51, 56, 59]
+    
+    # Escludi l'item 33 se il paziente è maschio
+    if genere_paziente == "Maschio" and 33 in item_da_sommare:
+        item_da_sommare.remove(33) # In realtà l'item 33 non era già nella lista, ma questo rende la logica esplicita e sicura
+
     punteggio_totale = sum(risposte[i-1] for i in item_da_sommare)
+    
     if punteggio_totale >= 46:
         risultato = "Positivo (punteggio >= 46)"
     else:
         risultato = "Negativo (punteggio < 46)"
     return {'risultato': risultato, 'punteggio_totale': punteggio_totale}
 
-def calcola_temps_a(risposte):
+
+def calcola_temps_a(risposte, genere_paziente):
+    # L'item 84 corrisponde all'indice 83 nella lista (che parte da 0)
+    item_84_index = 83
+
     domini_config = {
         'depressivo': (0, 22),
         'ciclotimico': (22, 42),
         'ipertimico': (42, 63),
-        'irritabile': (63, 83),
-        'ansioso': (83, 110)
+        'irritabile': (63, 83), # Inizialmente fino a 83 (escluso)
+        'ansioso': (84, 110)   # Inizia dopo l'item 84
     }
+
+    # Aggiungi l'item 84 al dominio irritabile solo se il genere non è Maschio
+    if genere_paziente != "Maschio":
+        domini_config['irritabile'] = (63, 84) # Ora include l'item 84
+    
     punteggi_medi = {}
     for dominio, (start, end) in domini_config.items():
-        somma_dominio = sum(risposte[start:end])
-        num_item = end - start
+        # Se il dominio è 'ansioso', salta l'indice dell'item 84 se il genere è Maschio
+        if dominio == 'ansioso' and genere_paziente == "Maschio":
+            risposte_dominio = risposte[start:end] # L'item 84 è già escluso dal range
+        else:
+             risposte_dominio = risposte[start:end]
+
+        somma_dominio = sum(risposte_dominio)
+        num_item = len(risposte_dominio)
         punteggi_medi[dominio] = somma_dominio / num_item if num_item > 0 else 0
     
     temperamento_dominante = "Nessuno"
@@ -39,6 +60,7 @@ def calcola_temps_a(risposte):
             temperamento_dominante = dominio.capitalize()
             
     return {'punteggi_medi': punteggi_medi, 'temperamento_dominante': temperamento_dominante}
+
 
 def calcola_bis11(risposte):
     item_reverse = [1, 7, 8, 9, 10, 12, 13, 15, 20, 29, 30]
@@ -147,7 +169,7 @@ def calcola_stai_y1(risposte):
     return {'interpretazione': interpretazione, 'punteggio_totale': punteggio_totale}
 import datetime
 
-def calcola_tutti_i_risultati(risposte, test_compilati):
+def calcola_tutti_i_risultati(risposte, test_compilati, genere_paziente):
     """
     Esegue i calcoli solo per i test che sono stati compilati.
     """
@@ -155,9 +177,11 @@ def calcola_tutti_i_risultati(risposte, test_compilati):
     if 'asrs' in test_compilati:
         risultati['ASRS-v1.1'] = calcola_asrs(risposte['asrs'][:6])
     if 'wurs' in test_compilati:
-        risultati['WURS'] = calcola_wurs(risposte['wurs'])
+        # Passiamo il genere alla funzione
+        risultati['WURS'] = calcola_wurs(risposte['wurs'], genere_paziente)
     if 'temps_a' in test_compilati:
-        risultati['TEMPS-A'] = calcola_temps_a(risposte['temps_a'])
+        # Passiamo il genere alla funzione
+        risultati['TEMPS-A'] = calcola_temps_a(risposte['temps_a'], genere_paziente)
     if 'bis11' in test_compilati:
         risultati['BIS-11'] = calcola_bis11(risposte['bis11'])
     if 'tas20' in test_compilati:
@@ -175,6 +199,7 @@ def calcola_tutti_i_risultati(risposte, test_compilati):
     if 'stai_y1' in test_compilati:
         risultati['STAI-Y-1'] = calcola_stai_y1(risposte['stai_y1'])
     return risultati
+
 
 def formatta_risultati_email(dati_paziente, risultati):
     """
