@@ -14,7 +14,7 @@ st.set_page_config(
 )
 
 # TITOLO DI PROVA PER VERIFICA
-st.title("--- VERSIONE DI TEST DEFINITIVA ---")
+st.title("Valutazione ADHD - Test Autosomministrati")
 st.caption('Creata dal Dott. Marco Manzo')
 st.caption('_Department of Psychiatry, University of Campania "Luigi Vanvitelli", Naples, Italy_')
 
