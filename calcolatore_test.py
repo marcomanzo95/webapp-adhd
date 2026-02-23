@@ -143,6 +143,18 @@ def calcola_stai_y1(risposte):
         interpretazione = "Livello di ansia di stato nella norma (soglia di riferimento < 40)"
     return {'interpretazione': interpretazione, 'punteggio_totale': punteggio_totale}
 
+def calcola_des2(risposte):
+    # Le risposte sono già in percentuale (0, 10, 20, ..., 100)
+    somma_percentuali = sum(risposte)
+    punteggio_medio = round(somma_percentuali / 28, 2)
+    
+    if punteggio_medio >= 30:
+        interpretazione = "Punteggio indicativo di possibile disturbo dissociativo clinicamente significativo (>= 30)"
+    else:
+        interpretazione = "Punteggio non indicativo di disturbo dissociativo clinicamente significativo (< 30)"
+        
+    return {'interpretazione': interpretazione, 'punteggio_medio': punteggio_medio}
+
 # --- Funzione Principale di Calcolo ---
 
 def calcola_tutti_i_risultati(risposte, test_compilati, genere_paziente):
@@ -163,6 +175,9 @@ def calcola_tutti_i_risultati(risposte, test_compilati, genere_paziente):
         risultati['HCL-34'] = calcola_hcl34(risposte['hcl34'])
     if 'ders' in test_compilati:
         risultati['DERS'] = calcola_ders(risposte['ders'])
+    # Aggiungi la riga seguente
+    if 'des2' in test_compilati:
+        risultati['DES-II'] = calcola_des2(risposte['des2'])
     if 'mews' in test_compilati:
         risultati['MEWS'] = calcola_mews(risposte['mews'])
     if 'stai_y2' in test_compilati:
