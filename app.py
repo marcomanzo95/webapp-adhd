@@ -45,7 +45,7 @@ if 'risposte' not in st.session_state:
     st.session_state.risposte = {
         'asrs': [0] * 18, 'wurs': [0] * 61, 'wurs_extra_testo': "", 'temps_a': [1] * 110,
         'bis11': [1] * 30, 'tas20': [3] * 20, 'mdq': {'gate': False, 'parte1': [False] * 13, 'parte2': False, 'parte3': 1},
-        'hcl34': [False] * 34, 'ders': [3] * 36, 'mews': [0] * 12,
+        'hcl34': [False] * 34, 'ders': [3] * 36, 'des2': [0] * 28, 'mews': [0] * 12,
         'stai_y2': [1] * 20, 'stai_y1': [1] * 20
     }
 if 'test_compilati' not in st.session_state:
@@ -342,6 +342,52 @@ with st.expander("Questionario DERS (Difficulties in Emotion Regulation Scale)")
             domanda, options=range(1, 6), format_func=lambda x: f"{x} - {opzioni_ders[x-1]}",
             key=f"ders_{i}", on_change=on_change_test, args=('ders',)
         )
+
+# --- DES-II ---
+with st.expander("Questionario DES-II (Dissociative Experiences Scale)"):
+    st.info("Indica con che percentuale di tempo vivi le seguenti esperienze, SENZA essere sotto l'influenza di alcol o droghe.")
+    domande_des2 = [
+        "1. Guidare una macchina e rendersi conto improvvisamente di non ricordare quello che è successo durante tutto il viaggio o in alcune parti del tragitto.",
+        "2. Ascoltare qualcuno parlare e rendersi conto improvvisamente che non si è ascoltato tutto il discorso o parte di ciò che è stato detto.",
+        "3. Trovarsi in un posto e non avere alcuna idea di come vi si è arrivati.",
+        "4. Ritrovarsi vestiti con abiti che non si ricordano di avere indossato.",
+        "5. Trovare fra le proprie cose nuovi oggetti che non si ricordano di avere comperato.",
+        "6. Essere avvicinati da persone che non si conoscono che chiamano con un altro nome o sostengono con insistenza di aver già incontrato prima.",
+        "7. Sentirsi come se ci si ritrovasse al di fuori del proprio corpo o guardarsi dall’esterno, come se si fosse un'altra persona.",
+        "8. Sentirsi dire che talvolta non si riconoscono amici o familiari.",
+        "9. Accorgersi di non ricordare alcuni eventi importanti della propria vita (ad esempio, un matrimonio o una laurea).",
+        "10. Essere accusati di mentire quando non si pensa di averlo fatto.",
+        "11. Guardarsi nello specchio e non riconoscersi.",
+        "12. Sentire come se le altre persone, gli oggetti e il mondo attorno non fossero reali.",
+        "13. Sentire come se il proprio corpo non appartenesse a sé.",
+        "14. Ricordare un evento passato in maniera così vivida e netta da sentirsi come se lo si stesse rivivendo.",
+        "15. Non essere sicuri se eventi che si ricordano siano realmente avvenuti o se siano stati semplicemente sognati.",
+        "16. Trovarsi in un posto familiare ma trovarlo strano e sconosciuto.",
+        "17. Quando si guarda la televisione o un film, essere così presi dalla storia da non avere consapevolezza degli altri eventi che accadono intorno.",
+        "18. Essere così coinvolti da una fantasia o da un sogno ad occhi aperti che sembra quasi di viverli realmente.",
+        "19. Ritenere di essere talvolta in grado di ignorare il dolore.",
+        "20. Stare seduti a fissare nel vuoto, senza pensare a niente, e non essere consapevoli del passare del tempo.",
+        "21. Quando si è soli, parlare ad alta voce a se stessi.",
+        "22. Agire così diversamente in una situazione rispetto ad un'altra da sentirsi quasi come se si fosse altre persone.",
+        "23. Accorgersi talvolta che in certe situazioni si è in grado di fare cose che di solito risulterebbero difficili (ad esempio, sport, lavoro, situazioni sociali, ecc) con sorprendente facilità e spontaneità.",
+        "24. Non riuscire a ricordare se si è fatto qualcosa o si è solamente pensato di farla (ad esempio, non sapere se si è appena spedito una lettera o si è solo pensato di inviarla).",
+        "25. Accorgersi di aver fatto delle cose che non si ricordano di aver compiuto.",
+        "26. Trovare a volte cose scritte, disegni o appunti tra le proprie cose, che si devono per forza aver fatto ma che non si riesce a ricordare di avere fatto.",
+        "27. Sentire a volte delle voci dentro la propria testa che dicono di fare cose o commentano le azioni che si fanno.",
+        "28. Sentirsi a volte come se si stesse guardando il mondo attraverso una cortina di nebbia, cosicché le altre persone o gli oggetti appaiono lontani o sfocati."
+    ]
+    opzioni_des2 = list(range(0, 101, 10)) # Crea una lista [0, 10, 20, ..., 100]
+    for i, domanda in enumerate(domande_des2):
+        st.session_state.risposte['des2'][i] = st.select_slider(
+            domanda,
+            options=opzioni_des2,
+            format_func=lambda x: f"{x}%",
+            key=f"des2_{i}",
+            on_change=on_change_test,
+            args=('des2',)
+        )
+
+
 # --- MEWS ---
 with st.expander("Questionario MEWS (Modified Engulfment With-Symptoms Scale)"):
     st.info("Quanto sono comuni per Voi queste affermazioni?")
