@@ -110,9 +110,9 @@ def calcola_ders(risposte):
 def calcola_mews(risposte):
     punteggio_totale = sum(risposte)
     if punteggio_totale >= 22:
-        interpretazione = "Livello significativo di 'engulfment' (percezione di essere sopraffatto/definito dai sintomi)"
+        interpretazione = "Livello significativo di affaticamento e irrequietezza mentale (punteggio >= 22)"
     else:
-        interpretazione = "Livello non significativo di 'engulfment'"
+        interpretazione = "Livello non significativo di affaticamento e irrequietezza mentale (punteggio < 22)"
     return {'interpretazione': interpretazione, 'punteggio_totale': punteggio_totale}
 
 def calcola_stai_y2(risposte):
