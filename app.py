@@ -388,16 +388,22 @@ with st.expander("Questionario DES-II (Dissociative Experiences Scale)"):
         )
 
 
-# --- MEWS ---
-with st.expander("Questionario MEWS (Modified Engulfment With-Symptoms Scale)"):
-    st.info("Quanto sono comuni per Voi queste affermazioni?")
+# --- MEWS (Mental Effort Scale) ---
+with st.expander("Questionario MEWS (Mental Effort / Mental Energy / Mental Restlessness Scale)"):
+    st.info("Le seguenti domande si riferiscono a come ti sei sentito/a nelle ultime 2 settimane. Quanto sono comuni per Voi queste affermazioni?")
     domande_mews = [
-        "1. Ho difficoltà a controllare i miei pensieri", "2. È difficile spegnere i miei pensieri",
-        "3. Ho due o più pensieri contemporaneamente in testa", "4. I miei pensieri sono disorganizzati e confusi",
-        "5. I miei pensieri sono sempre in movimento", "6. Percepisco un’attività mentale senza sosta",
-        "7. Faccio fatica a pensare ad una cosa senza che un altro pensiero entri nella mia testa", "8. Mi sembra che i miei pensieri siano fonte di distrazione e non mi permettano di concentrarmi su quello che sto facendo",
-        "9. Ho difficoltà a rallentare i miei pensieri e concentrarmi su una cosa alla volta", "10. Faccio fatica a pensare con lucidità come se la mia mente fosse annebbiata",
-        "11. Mi capita che i miei pensieri svolazzino qua e la'", "12. Posso concentrare i miei pensieri solo su una cosa per volta, con grande sforzo"
+        "1. Mi sento mentalmente stanco/a o affaticato/a",
+        "2. Devo fare uno sforzo mentale per concentrarmi",
+        "3. La mia mente si sente irrequieta",
+        "4. Mi sento come se la mia 'batteria mentale' fosse scarica",
+        "5. Faccio fatica a mantenere la concentrazione per lunghi periodi",
+        "6. I miei pensieri sembrano 'accelerati' o corrono",
+        "7. Mi sento esausto/a dopo aver svolto compiti mentali",
+        "8. È difficile per me 'spegnere' i miei pensieri",
+        "9. La mia mente vaga facilmente",
+        "10. Sento un'irrequietezza interiore che non riesco a calmare",
+        "11. Ho bisogno di molta energia mentale per iniziare un'attività",
+        "12. Mi sento sopraffatto/a da troppi pensieri contemporaneamente"
     ]
     opzioni_mews = ["Mai o raramente", "Qualche volta", "Per maggior parte del tempo", "Praticamente sempre, costantemente"]
     for i, domanda in enumerate(domande_mews):
@@ -405,6 +411,7 @@ with st.expander("Questionario MEWS (Modified Engulfment With-Symptoms Scale)"):
             domanda, options=range(len(opzioni_mews)), format_func=lambda x: opzioni_mews[x],
             key=f"mews_{i}", horizontal=True, on_change=on_change_test, args=('mews',)
         )
+
 
 # --- STAI-Y-2 (Ansia di Tratto) ---
 with st.expander("Questionario STAI-Y-2 (Ansia di Tratto)"):
