@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # Assicurati che il file calcolatore_test.py sia nella stessa cartella
-from calcolatore_test import calcola_tutti_i_risultati, formatta_risultati_email
+from calcolatore_test import calcola_tutti_i_risultati, formatta_risultati_email, AREE_ABAS, OPZIONI_ABAS, fascia_eta
 
 st.set_page_config(
     page_title="Valutazione ADHD - Test Autosomministrati",
@@ -46,7 +46,13 @@ if 'risposte' not in st.session_state:
         'asrs': [0] * 18, 'wurs': [0] * 61, 'wurs_extra_testo': "", 'temps_a': [1] * 110,
         'bis11': [1] * 30, 'tas20': [3] * 20, 'mdq': {'gate': False, 'parte1': [False] * 13, 'parte2': False, 'parte3': 1},
         'hcl34': [False] * 34, 'ders': [3] * 36, 'des2': [0] * 28, 'mews': [0] * 12,
-        'stai_y2': [1] * 20, 'stai_y1': [1] * 20
+        'stai_y2': [1] * 20, 'stai_y1': [1] * 20,
+        'abas': {
+            'eta': 0,
+            'ha_lavoro': False,
+            'risposte': {area: [0] * len(info['items']) for area, info in AREE_ABAS.items()},
+            'suppongo': {area: [False] * len(info['items']) for area, info in AREE_ABAS.items()},
+        }
     }
 if 'test_compilati' not in st.session_state:
     st.session_state.test_compilati = set()
@@ -412,6 +418,60 @@ with st.expander("Questionario MEWS (Mental Effort / Mental Energy / Mental Rest
             key=f"mews_{i}", horizontal=True, on_change=on_change_test, args=('mews',)
         )
 
+
+# --- ABAS-II ---
+with st.expander("Questionario ABAS-II (Adaptive Behavior Assessment System) — Eterovalutazione"):
+    st.info(
+        "Questo questionario viene compilato da un familiare o caregiver che conosce bene il soggetto. "
+        "Per ogni abilità, indica se il soggetto la svolge e con quale frequenza. "
+        "Spunta 'Suppongo' se non hai osservato direttamente il comportamento ma pensi che il soggetto sappia farlo."
+    )
+
+    eta_abas = int((datetime.date.today() - data_nascita).days / 365.25)
+    fascia = fascia_eta(eta_abas)
+
+    if fascia is None:
+        st.warning(f"L'età del soggetto ({eta_abas} anni) è fuori dall'intervallo supportato (16–49 anni). Il questionario non verrà calcolato.")
+    else:
+        st.session_state.risposte['abas']['eta'] = eta_abas
+        if fascia != "16-21":
+            st.info(f"Età rilevata: {eta_abas} anni (fascia {fascia}). I punteggi compositi (GAC, DAC, DAS, DAP) sono disponibili solo per la fascia 16–21; verranno mostrati i punteggi grezzi e ponderati per tutte le fasce.")
+
+        ha_lavoro = st.radio(
+            "Il soggetto svolge attualmente un'attività lavorativa?",
+            options=["No", "Sì"], key="abas_lavoro", horizontal=True,
+            on_change=on_change_test, args=('abas',)
+        )
+        st.session_state.risposte['abas']['ha_lavoro'] = (ha_lavoro == "Sì")
+
+        aree_da_mostrare = list(AREE_ABAS.keys())
+        if not st.session_state.risposte['abas']['ha_lavoro']:
+            aree_da_mostrare = [a for a in aree_da_mostrare if a != "lavoro"]
+
+        for area in aree_da_mostrare:
+            info = AREE_ABAS[area]
+            st.subheader(f"{info['label']} ({info['dominio']})")
+            for i, item in enumerate(info['items']):
+                col_radio, col_supp = st.columns([4, 1])
+                with col_radio:
+                    val = st.radio(
+                        f"{i+1}. {item}",
+                        options=list(OPZIONI_ABAS.keys()),
+                        format_func=lambda x: OPZIONI_ABAS[x],
+                        key=f"abas_{area}_{i}",
+                        horizontal=True,
+                        on_change=on_change_test,
+                        args=('abas',)
+                    )
+                    st.session_state.risposte['abas']['risposte'][area][i] = val
+                with col_supp:
+                    supp = st.checkbox(
+                        "Suppongo",
+                        key=f"abas_supp_{area}_{i}",
+                        on_change=on_change_test,
+                        args=('abas',)
+                    )
+                    st.session_state.risposte['abas']['suppongo'][area][i] = supp
 
 # --- STAI-Y-2 (Ansia di Tratto) ---
 with st.expander("Questionario STAI-Y-2 (Ansia di Tratto)"):
