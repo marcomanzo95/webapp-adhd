@@ -229,7 +229,7 @@ def sezione_bis11():
         st.info("Leggi attentamente ciascuna affermazione ed indica la risposta che più si adatta a te. Rispondi rapidamente e sinceramente.")
         domande = [
             "1. Io programmo accuratamente le attività", "2. Faccio le cose senza pensare", "3. Decido con molta rapidità",
-            "4. Prendo il mondo come viene", "5. Non presto attenzione", "6. I miei pensieri "corrono"",
+            "4. Prendo il mondo come viene", "5. Non presto attenzione", "6. I miei pensieri \"corrono\"",
             "7. Programmo i miei viaggi con molto anticipo", "8. Sono padrone di me", "9. Mi concentro facilmente",
             "10. Io risparmio con regolarità", "11. Sto sulle spine al teatro o alle conferenze", "12. Sono uno che pensa accuratamente",
             "13. Faccio piani per un investimento per il futuro", "14. Dico le cose senza pensare", "15. Mi piace pensare a problemi complessi",
