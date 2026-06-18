@@ -4,7 +4,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-from calcolatore_test import calcola_tutti_i_risultati, formatta_risultati_email, AREE_ABAS, OPZIONI_ABAS, fascia_eta
+from calcolatore_test import calcola_tutti_i_risultati, formatta_risultati_email, AREE_ABAS, OPZIONI_ABAS, fascia_eta, TAVOLA_A9, TAVOLA_A1, TAVOLA_A5_G
 
 st.set_page_config(
     page_title="Valutazione ADHD - Test Autosomministrati",
@@ -50,7 +50,10 @@ if 'risposte' not in st.session_state:
             'ha_lavoro': False,
             'risposte': {area: [0] * len(info['items']) for area, info in AREE_ABAS.items()},
             'suppongo': {area: [False] * len(info['items']) for area, info in AREE_ABAS.items()},
-        }
+        },
+        'abas_auto': {'eta': 0, 'ha_lavoro': False, 'grezzi': {s:0 for s in ['co','am','sco','vc','ss','tl','cur','ac','soc','lav']}},
+        'abas_ins':  {'eta': 0, 'ha_lavoro': False, 'grezzi': {s:0 for s in ['co','am','sco','vs','ss','tl','cur','ac','soc','lav']}},
+        'abas_gen':  {'eta': 0, 'ha_lavoro': False, 'grezzi': {s:0 for s in ['co','am','sco','vc','ss','tl','cur','ac','soc','lav']}},
     }
 if 'test_compilati' not in st.session_state:
     st.session_state.test_compilati = set()
@@ -521,6 +524,131 @@ def sezione_abas(data_nascita):
                     st.session_state.risposte['abas']['suppongo'][area][i] = supp
 
 sezione_abas(data_nascita)
+
+
+# ── ABAS-II Autovalutazione ───────────────────────────────────────────────────
+@st.fragment
+def sezione_abas_autovalutazione(data_nascita):
+    with st.expander("Questionario ABAS-II — Autovalutazione adulto (16-74)"):
+        st.info(
+            "Questa sezione è compilata direttamente dall'adulto che si autovaluta. "
+            "Inserire il **punteggio grezzo totale** di ciascuna subscala dal protocollo cartaceo."
+        )
+        eta = int((datetime.date.today() - data_nascita).days / 365.25)
+        fascia = fascia_eta(eta)
+        if fascia is None:
+            st.warning(f"Età {eta} anni fuori dall'intervallo 16–74. Non calcolabile.")
+            return
+        st.session_state.risposte['abas_auto']['eta'] = eta
+        st.info(f"Età: {eta} anni — fascia {fascia}")
+
+        ha_lav = st.radio("Il soggetto svolge attività lavorativa?",
+                          ["No", "Sì"], key="abas_auto_lav", horizontal=True,
+                          on_change=on_change_test, args=('abas_auto',))
+        st.session_state.risposte['abas_auto']['ha_lavoro'] = (ha_lav == "Sì")
+
+        _SUBS_AUTO = [
+            ("co", "Comunicazione (Co)", 75),
+            ("am", "Uso dell'ambiente (Am)", 72),
+            ("sco", "Competenze scolastiche (Sco)", 81),
+            ("vc", "Vita a casa (VC)", 69),
+            ("ss", "Salute e sicurezza (SS)", 60),
+            ("tl", "Tempo libero (TL)", 69),
+            ("cur", "Cura di sé (Cur)", 75),
+            ("ac", "Autocontrollo (Ac)", 75),
+            ("soc", "Socializzazione (Soc)", 69),
+            ("lav", "Lavoro (Lav)", 72),
+        ]
+        for sub, label, max_v in _SUBS_AUTO:
+            if sub == "lav" and not st.session_state.risposte['abas_auto']['ha_lavoro']:
+                continue
+            val = st.number_input(label, min_value=0, max_value=max_v, step=1,
+                                  key=f"abas_auto_{sub}", on_change=on_change_test, args=('abas_auto',))
+            st.session_state.risposte['abas_auto']['grezzi'][sub] = val
+
+sezione_abas_autovalutazione(data_nascita)
+
+
+# ── ABAS-II Insegnante ────────────────────────────────────────────────────────
+@st.fragment
+def sezione_abas_insegnante(data_nascita):
+    with st.expander("Questionario ABAS-II — Forma Insegnante (17-21)"):
+        st.info(
+            "Questa sezione è compilata dall'insegnante. "
+            "Inserire il **punteggio grezzo totale** di ciascuna subscala dal protocollo cartaceo."
+        )
+        eta = int((datetime.date.today() - data_nascita).days / 365.25)
+        if not (17 <= eta <= 21):
+            st.warning(f"Età {eta} anni: la forma Insegnante è normata per 17–21 anni.")
+            return
+        st.session_state.risposte['abas_ins']['eta'] = eta
+
+        ha_lav = st.radio("Compilare subscala Lavoro?",
+                          ["No", "Sì"], key="abas_ins_lav", horizontal=True,
+                          on_change=on_change_test, args=('abas_ins',))
+        st.session_state.risposte['abas_ins']['ha_lavoro'] = (ha_lav == "Sì")
+
+        _SUBS_INS = [
+            ("co",  "Comunicazione (Co)", 100),
+            ("am",  "Uso dell'ambiente (Am)", 100),
+            ("sco", "Competenze scolastiche (Sco)", 100),
+            ("vs",  "Vita a scuola (VS)", 100),
+            ("ss",  "Salute e sicurezza (SS)", 100),
+            ("tl",  "Tempo libero (TL)", 100),
+            ("cur", "Cura di sé (Cur)", 100),
+            ("ac",  "Autocontrollo (Ac)", 100),
+            ("soc", "Socializzazione (Soc)", 100),
+            ("lav", "Lavoro (Lav)", 100),
+        ]
+        for sub, label, max_v in _SUBS_INS:
+            if sub == "lav" and not st.session_state.risposte['abas_ins']['ha_lavoro']:
+                continue
+            val = st.number_input(label, min_value=0, max_value=max_v, step=1,
+                                  key=f"abas_ins_{sub}", on_change=on_change_test, args=('abas_ins',))
+            st.session_state.risposte['abas_ins']['grezzi'][sub] = val
+
+sezione_abas_insegnante(data_nascita)
+
+
+# ── ABAS-II Genitore ──────────────────────────────────────────────────────────
+@st.fragment
+def sezione_abas_genitore(data_nascita):
+    with st.expander("Questionario ABAS-II — Forma Genitore (17-21)"):
+        st.info(
+            "Questa sezione è compilata da un genitore o tutore. "
+            "Inserire il **punteggio grezzo totale** di ciascuna subscala dal protocollo cartaceo."
+        )
+        eta = int((datetime.date.today() - data_nascita).days / 365.25)
+        if not (17 <= eta <= 21):
+            st.warning(f"Età {eta} anni: la forma Genitore è normata per 17–21 anni.")
+            return
+        st.session_state.risposte['abas_gen']['eta'] = eta
+
+        ha_lav = st.radio("Compilare subscala Lavoro?",
+                          ["No", "Sì"], key="abas_gen_lav", horizontal=True,
+                          on_change=on_change_test, args=('abas_gen',))
+        st.session_state.risposte['abas_gen']['ha_lavoro'] = (ha_lav == "Sì")
+
+        _SUBS_GEN = [
+            ("co",  "Comunicazione (Co)", 100),
+            ("am",  "Uso dell'ambiente (Am)", 100),
+            ("sco", "Competenze scolastiche (Sco)", 100),
+            ("vc",  "Vita a casa (VC)", 100),
+            ("ss",  "Salute e sicurezza (SS)", 100),
+            ("tl",  "Tempo libero (TL)", 100),
+            ("cur", "Cura di sé (Cur)", 100),
+            ("ac",  "Autocontrollo (Ac)", 100),
+            ("soc", "Socializzazione (Soc)", 100),
+            ("lav", "Lavoro (Lav)", 100),
+        ]
+        for sub, label, max_v in _SUBS_GEN:
+            if sub == "lav" and not st.session_state.risposte['abas_gen']['ha_lavoro']:
+                continue
+            val = st.number_input(label, min_value=0, max_value=max_v, step=1,
+                                  key=f"abas_gen_{sub}", on_change=on_change_test, args=('abas_gen',))
+            st.session_state.risposte['abas_gen']['grezzi'][sub] = val
+
+sezione_abas_genitore(data_nascita)
 
 
 # ── STAI-Y-2 ──────────────────────────────────────────────────────────────────
