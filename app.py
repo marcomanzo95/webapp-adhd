@@ -477,12 +477,12 @@ def sezione_abas(data_nascita):
         fascia = fascia_eta(eta_abas)
 
         if fascia is None:
-            st.warning(f"L'età del soggetto ({eta_abas} anni) è fuori dall'intervallo supportato (16–49 anni). Il questionario non verrà calcolato.")
+            st.warning(f"L'età del soggetto ({eta_abas} anni) è fuori dall'intervallo supportato (16–74 anni). Il questionario non verrà calcolato.")
             return
 
         st.session_state.risposte['abas']['eta'] = eta_abas
         if fascia != "16-21":
-            st.info(f"Età rilevata: {eta_abas} anni (fascia {fascia}). I punteggi compositi (GAC, DAC, DAS, DAP) sono disponibili solo per la fascia 16–21; verranno mostrati i punteggi grezzi e ponderati per tutte le fasce.")
+            st.info(f"Età rilevata: {eta_abas} anni (fascia {fascia}). I punteggi compositi (GAC, DAC, DAS, DAP) sono calcolati per tutte le fasce 16–74. Per fasce > 21 i valori compositi sono derivati da OCR del manuale: verificare i casi critici sul cartaceo.")
 
         ha_lavoro = st.radio(
             "Il soggetto svolge attualmente un'attività lavorativa?",
