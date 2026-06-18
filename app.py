@@ -4,7 +4,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-from calcolatore_test import calcola_tutti_i_risultati, formatta_risultati_email, AREE_ABAS, OPZIONI_ABAS, fascia_eta, TAVOLA_A9, TAVOLA_A1, TAVOLA_A5_G
+from calcolatore_test import calcola_tutti_i_risultati, formatta_risultati_email, AREE_ABAS, OPZIONI_ABAS, fascia_eta
 
 st.set_page_config(
     page_title="Valutazione ADHD - Test Autosomministrati",
