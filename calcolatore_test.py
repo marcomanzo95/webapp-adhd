@@ -660,7 +660,8 @@ def _lookup(pairs, somma):
         return None
     sums = [p[0] for p in pairs]
     idx = bisect.bisect_right(sums, somma) - 1
-    return pairs[idx][1] if idx >= 0 else None
+    # Se somma < minimo tabulato restituiamo il composito più basso disponibile
+    return pairs[idx][1] if idx >= 0 else pairs[0][1]
 
 _GAC_SL_16_21 = _inv({
     40:9, 41:10, 42:11, 43:12, 44:13, 45:14, 46:15, 47:16, 48:17,
