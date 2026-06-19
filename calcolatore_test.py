@@ -660,8 +660,7 @@ def _lookup(pairs, somma):
         return None
     sums = [p[0] for p in pairs]
     idx = bisect.bisect_right(sums, somma) - 1
-    # Se somma < minimo tabulato restituiamo il composito più basso disponibile
-    return pairs[idx][1] if idx >= 0 else pairs[0][1]
+    return pairs[idx][1] if idx >= 0 else None
 
 _GAC_SL_16_21 = _inv({
     40:9, 41:10, 42:11, 43:12, 44:13, 45:14, 46:15, 47:16, 48:17,
@@ -1023,10 +1022,28 @@ def calcola_abas(risposte_abas):
     risultato['DAS – Dominio Sociale'] = fmt(comp_das)
     risultato['DAP – Dominio Pratico'] = fmt(comp_dap)
 
+    note = []
     if fascia != "16-21":
-        risultato['Nota'] = ("I punteggi compositi per fasce 22-74 sono derivati da tavole "
-                             "estratte via OCR dal manuale: verificare i valori critici sul "
-                             "manuale cartaceo prima dell'uso clinico.")
+        note.append("I punteggi compositi per fasce 22-74 sono derivati da tavole "
+                    "estratte via OCR dal manuale: verificare i valori critici sul "
+                    "manuale cartaceo prima dell'uso clinico.")
+    # Segnala se qualche composito è N/D per somma sotto il floor della tavola
+    if any(c is None for c in [comp_dac, comp_das, comp_dap, comp_gac]):
+        sotto_floor = []
+        t13 = TAVOLA_A13.get(fascia, {})
+        for nome, somma, col in [
+            ("DAC", dac_sum, 'dac'), ("DAS", das_sum, 'das'),
+            ("DAP", dap_sum, col_dap), ("GAC", gac_sum, col_gac),
+        ]:
+            if somma is not None:
+                pairs = t13.get(col, [])
+                if pairs and somma < pairs[0][0]:
+                    sotto_floor.append(f"{nome} (somma Pp={somma}, minimo tabulato={pairs[0][0]}→composito={pairs[0][1]})")
+        if sotto_floor:
+            note.append("Somme ponderali sotto il range normativo tabulato: " + "; ".join(sotto_floor) +
+                        ". Verificare sul manuale se esistono righe per compositi inferiori.")
+    if note:
+        risultato['Nota'] = " — ".join(note)
 
     return risultato
 
@@ -1499,6 +1516,20 @@ def _calcola_abas_forma(grezzi, tabella_grezzi, tavola_comp, fascia_label,
     res["DAC – Dominio Concettuale"] = fmt(comp_dac)
     res["DAS – Dominio Sociale"] = fmt(comp_das)
     res["DAP – Dominio Pratico"] = fmt(comp_dap)
+
+    sotto_floor = []
+    for nome, somma, col_key in [
+        ("DAC", dac_sum, "dac"), ("DAS", das_sum, "das"),
+        ("DAP", dap_sum, col_dap_key), ("GAC", gac_sum, col_gac_key),
+    ]:
+        if somma is not None:
+            pairs = tavola_comp.get(col_key, tavola_comp.get("dap", tavola_comp.get("gac", [])))
+            if pairs and somma < pairs[0][0]:
+                sotto_floor.append(f"{nome} (Pp={somma}, min tabulato={pairs[0][0]}→comp={pairs[0][1]})")
+    if sotto_floor:
+        res["Nota"] = ("Somme ponderali sotto il range normativo tabulato — "
+                       + "; ".join(sotto_floor)
+                       + ". Verificare sul manuale se esistono righe per compositi inferiori.")
     return res
 
 
