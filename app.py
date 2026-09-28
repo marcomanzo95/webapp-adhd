@@ -543,7 +543,7 @@ def sezione_abas_autovalutazione(data_nascita):
         st.info(f"Età: {eta} anni — fascia {fascia}")
 
         ha_lav = st.radio("Il soggetto svolge attività lavorativa?",
-                          ["No", "Sì"], key="abas_auto_lav", horizontal=True,
+                          ["No", "Sì"], key="abas_auto_ha_lavoro", horizontal=True,
                           on_change=on_change_test, args=('abas_auto',))
         st.session_state.risposte['abas_auto']['ha_lavoro'] = (ha_lav == "Sì")
 
@@ -584,7 +584,7 @@ def sezione_abas_insegnante(data_nascita):
         st.session_state.risposte['abas_ins']['eta'] = eta
 
         ha_lav = st.radio("Compilare subscala Lavoro?",
-                          ["No", "Sì"], key="abas_ins_lav", horizontal=True,
+                          ["No", "Sì"], key="abas_ins_ha_lavoro", horizontal=True,
                           on_change=on_change_test, args=('abas_ins',))
         st.session_state.risposte['abas_ins']['ha_lavoro'] = (ha_lav == "Sì")
 
@@ -625,7 +625,7 @@ def sezione_abas_genitore(data_nascita):
         st.session_state.risposte['abas_gen']['eta'] = eta
 
         ha_lav = st.radio("Compilare subscala Lavoro?",
-                          ["No", "Sì"], key="abas_gen_lav", horizontal=True,
+                          ["No", "Sì"], key="abas_gen_ha_lavoro", horizontal=True,
                           on_change=on_change_test, args=('abas_gen',))
         st.session_state.risposte['abas_gen']['ha_lavoro'] = (ha_lav == "Sì")
 
