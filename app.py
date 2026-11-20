@@ -640,7 +640,10 @@ def sezione_abas_insegnante(data_nascita):
                                   key=f"abas_ins_{sub}", on_change=on_change_test, args=('abas_ins',))
             st.session_state.risposte['abas_ins']['grezzi'][sub] = val
 
-sezione_abas_insegnante(data_nascita)
+# Forma Insegnante nascosta finché non sono pronte le domande del libretto: rimettere True per mostrarla.
+MOSTRA_ABAS_INSEGNANTE = False
+if MOSTRA_ABAS_INSEGNANTE:
+    sezione_abas_insegnante(data_nascita)
 
 
 # ── ABAS-II Genitore ──────────────────────────────────────────────────────────
