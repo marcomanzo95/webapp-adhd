@@ -662,275 +662,9 @@ def _lookup(pairs, somma):
     idx = bisect.bisect_right(sums, somma) - 1
     return pairs[idx][1] if idx >= 0 else None
 
-_GAC_SL_16_21 = _inv({
-    40:9, 41:10, 42:11, 43:12, 44:13, 45:14, 46:15, 47:16, 48:17,
-    49:18, 50:19, 51:20, 52:21, 53:22,
-    54:(23,24), 55:(25,26), 56:(27,28), 57:(29,30), 58:(31,32),
-    59:(33,34), 60:(35,36), 61:(37,38), 62:(39,40), 63:(41,42),
-    64:(43,44), 65:(45,46), 66:(47,48), 67:(49,50), 68:(51,52),
-    69:(53,54), 70:(55,56),
-    71:57, 72:58, 73:59, 74:60, 75:61, 76:62, 77:63, 78:64, 79:65,
-    80:66, 81:67, 82:68, 83:69, 84:70, 85:71, 86:72, 87:73, 88:74,
-    89:75, 90:76, 91:77,
-    92:(78,79), 93:(80,81), 94:(82,83), 95:(84,85), 96:(86,87),
-    97:(88,89), 98:(90,91), 99:(92,93),
-    100:94, 101:(95,96), 102:97, 103:98, 104:(99,100),
-    105:101, 106:102, 107:(103,104), 108:105, 109:106,
-    110:107, 111:(108,109),
-    112:110, 113:111, 114:112, 115:113, 116:114,
-    117:115, 118:116, 119:117, 120:(118,125),
-})
+# Le vecchie tavole A.13 (estratte via OCR, errate) sono state sostituite da tabelle_abas.A13.
 
-_GAC_CL_16_21 = _inv({
-    40:10, 41:11, 42:12, 43:13, 44:14, 45:15, 46:16, 47:17, 48:18,
-    49:19, 50:20, 51:21, 52:22, 53:23, 54:24,
-    55:(25,26), 56:(27,28), 57:(29,30), 58:(31,32), 59:(33,34),
-    60:(35,36), 61:(37,38), 62:(39,40), 63:(41,42), 64:(43,44),
-    65:(45,46), 66:(47,48), 67:(49,50), 68:(51,52), 69:(53,54),
-    70:(55,56), 71:(57,58), 72:(59,60), 73:(61,62), 74:(63,64),
-    75:65, 76:(66,67), 77:(68,69), 78:(70,71), 79:72,
-    80:(73,74), 81:(75,76), 82:(77,78), 83:79,
-    84:(80,81), 85:(82,83), 86:84, 87:(85,86), 88:(87,88), 89:89,
-    90:(90,91), 91:(92,93), 92:94, 93:(95,96), 94:97,
-    95:(98,99), 96:100, 97:(101,102), 98:103, 99:(104,105),
-    100:106, 101:(107,108), 102:109, 103:(110,111), 104:112,
-    105:113, 106:114, 107:(115,116), 108:117, 109:118,
-    110:119, 111:120, 112:(121,122), 113:123, 114:124,
-    115:125, 116:126, 117:127, 118:128, 119:129,
-    120:(130,138),
-})
-
-_DAC_16_21 = _inv({
-    49:3, 51:4, 53:5, 55:6, 57:7, 59:8, 61:9, 63:10, 65:11,
-    67:12, 69:13, 70:14, 72:15, 74:16, 76:17, 78:18, 80:19,
-    82:20, 83:21, 85:22, 87:23, 89:24, 90:25, 92:26, 94:27,
-    95:28, 97:29, 99:30, 100:31, 102:32, 104:33, 106:34,
-    108:35, 110:36, 112:37, 116:38, 120:(39,57),
-})
-
-_DAS_16_21 = _inv({
-    54:2, 57:3, 60:4, 62:5, 64:6, 66:7, 68:8, 70:9, 72:10,
-    75:11, 78:12, 81:13, 84:14, 87:15, 90:16, 92:17,
-    95:18, 97:19, 99:20, 101:21, 104:22, 107:23, 110:24,
-    114:25, 119:26, 120:(27,38),
-})
-
-_DAP_SL_16_21 = _inv({
-    43:4, 45:5, 47:6, 49:7, 51:8, 53:9, 55:10, 57:11, 59:12,
-    61:13, 63:14, 65:15, 67:16, 69:17, 71:18, 73:19, 75:20,
-    76:21, 77:22, 78:23, 79:24, 80:25, 81:26, 83:27, 84:28,
-    85:29, 86:30, 87:31, 88:32, 89:33, 90:34, 92:35, 93:36,
-    94:37, 95:38, 96:39, 98:40, 99:41, 100:42, 102:43, 103:44,
-    105:45, 107:46, 109:47, 111:48, 113:49, 115:50, 117:51,
-    120:(52,57),
-})
-
-_DAP_CL_16_21 = _inv({
-    40:5, 42:6, 44:7, 46:8, 48:9, 50:10, 51:11, 52:12, 53:13,
-    54:14, 55:15, 56:16, 57:17, 58:18, 59:19, 60:20, 61:21,
-    62:22, 63:23, 64:24, 65:25, 66:26, 67:27, 68:28, 69:29,
-    70:30, 72:31, 73:32, 75:33, 76:34, 78:35, 79:36, 81:37,
-    82:38, 83:39, 85:40, 86:41, 87:42, 89:43, 90:44, 91:45,
-    92:46, 93:47, 94:48, 95:49, 96:50, 97:51, 99:52, 100:53,
-    101:54, 102:55, 103:56, 104:57, 106:58, 108:59, 109:60,
-    111:61, 113:62, 116:63, 120:(64,69),
-})
-
-# ── Tabelle A.13 per fasce 22-74 ─────────────────────────────────────
-# Fonte: pagine 23-30 del PDF (ruotate 180°). Formato: {composito: min_sum_ponderati}
-
-_DAC_22_29 = _inv({
-    75:24, 78:25, 80:26, 81:27, 83:28, 87:30, 90:31,
-    92:32, 94:33, 96:34, 98:35, 100:36, 103:37, 106:38,
-    116:39, 125:(40,57),
-})
-_DAS_22_29 = _inv({
-    63:13, 69:14, 73:15, 76:16, 79:17, 83:18, 85:19,
-    89:20, 93:21, 97:22, 105:24, 108:25, 112:26, 117:27,
-    125:(28,38),
-})
-_DAP_SL_22_29 = _inv({
-    75:33, 77:34, 79:35, 81:36, 83:37, 85:38, 87:39,
-    89:40, 91:41, 93:42, 95:43, 99:45, 101:46, 104:47,
-    106:48, 109:49, 112:50, 116:51, 125:(52,76),
-})
-_DAP_CL_22_29 = _inv({
-    63:32, 69:33, 74:34, 76:35, 78:36, 80:37, 83:38,
-    85:39, 88:40, 90:41, 93:42, 96:43, 99:44, 102:45,
-    105:46, 108:47, 111:48, 114:49, 125:(50,65),
-})
-_GAC_SL_22_29 = _inv({
-    62:67, 63:68, 64:69, 65:70, 66:71, 67:72, 68:73,
-    69:74, 70:75, 71:76, 72:77, 73:78, 74:79, 75:81,
-    76:83, 77:85, 78:87, 79:89, 81:91, 84:98, 87:101,
-    90:104, 93:107, 96:111, 99:114, 102:117, 105:120,
-    108:123, 111:126, 114:129, 117:131, 125:(132,138),
-})
-_GAC_CL_22_29 = _inv({
-    62:75, 63:76, 64:77, 65:78, 66:79, 67:80, 68:81,
-    69:82, 70:83, 71:84, 72:85, 73:86, 74:87, 75:88,
-    76:89, 77:90, 78:91, 79:92, 80:93, 81:95, 83:97,
-    85:99, 87:101, 89:103, 90:105, 91:106, 93:108,
-    95:110, 97:112, 99:114, 101:116, 103:118,
-    105:120, 108:123, 111:126, 114:129, 117:132,
-    125:(133,138),
-})
-
-_DAC_30_39 = _inv({
-    64:20, 66:21, 68:22, 69:23, 73:24, 74:25, 77:26,
-    79:27, 80:28, 82:29, 85:30, 86:31, 89:32, 90:33,
-    93:34, 96:35, 99:36, 102:37, 105:38, 108:39,
-    120:(40,57),
-})
-_DAS_30_39 = _inv({
-    64:13, 72:14, 77:15, 79:16, 83:18, 86:19, 90:20,
-    93:21, 97:22, 100:23, 104:24, 108:25, 112:26,
-    117:27, 120:(28,38),
-})
-_DAP_SL_30_39 = _inv({
-    73:27, 74:28, 75:29, 76:30, 77:31, 78:32, 79:33,
-    80:34, 81:35, 83:37, 85:38, 87:39, 89:40, 91:41,
-    93:42, 95:43, 99:45, 101:46, 103:47, 105:48,
-    108:49, 110:50, 113:51, 120:(52,57),
-})
-_DAP_CL_30_39 = _inv({
-    67:28, 69:29, 71:30, 72:31, 75:32, 77:33, 79:34,
-    80:35, 83:36, 85:37, 87:38, 89:39, 91:40, 94:41,
-    96:42, 99:43, 101:44, 103:45, 106:46, 109:47,
-    112:48, 116:49, 120:(50,62),
-})
-_GAC_SL_30_39 = _GAC_SL_22_29   # tavola simile; valori esatti non estratti dall'OCR
-_GAC_CL_30_39 = _GAC_CL_22_29
-
-_DAC_40_49 = _inv({
-    70:19, 72:20, 73:21, 75:22, 76:23, 78:24, 79:25,
-    81:26, 82:27, 84:28, 87:29, 88:30, 91:31, 93:32,
-    94:33, 96:34, 98:35, 100:36, 103:37, 106:38,
-    112:39, 118:(40,57),
-})
-_DAS_40_49 = _inv({
-    71:13, 73:14, 76:15, 78:16, 80:17, 82:18, 84:19,
-    87:20, 90:21, 93:22, 95:23, 97:24, 101:25,
-    105:26, 109:27, 112:28, 116:29, 118:(30,38),
-})
-_DAP_SL_40_49 = _inv({
-    70:27, 71:28, 72:29, 73:30, 74:31, 75:32, 76:33,
-    77:34, 78:35, 79:36, 80:37, 83:38, 85:39, 87:40,
-    88:41, 90:42, 93:43, 95:44, 97:45, 101:46,
-    105:47, 108:48, 112:49, 116:50, 118:(51,57),
-})
-_DAP_CL_40_49 = _inv({
-    70:34, 72:37, 73:38, 74:39, 75:41, 76:42, 77:43,
-    78:44, 79:45, 80:46, 82:47, 84:48, 87:49, 90:50,
-    93:51, 95:52, 98:53, 101:54, 104:55, 108:56,
-    112:57, 118:(58,63),
-})
-_GAC_SL_40_49 = _GAC_SL_22_29
-_GAC_CL_40_49 = _GAC_CL_22_29
-
-_DAC_50_64 = _inv({
-    70:19, 72:20, 75:21, 77:22, 79:23, 81:24, 83:25,
-    86:26, 87:27, 89:28, 90:29, 93:30, 95:31, 98:32,
-    100:33, 103:34, 105:35, 108:36, 111:37, 113:38,
-    118:(39,40), 125:(41,57),
-})
-_DAS_50_64 = _inv({
-    72:14, 74:15, 77:16, 79:17, 81:18, 83:19, 86:20,
-    90:21, 94:22, 99:23, 104:24, 108:25, 112:26,
-    118:27, 125:(28,38),
-})
-_DAP_SL_50_64 = _inv({
-    71:28, 73:29, 75:31, 77:32, 78:33, 80:34, 83:35,
-    85:36, 88:37, 90:38, 94:39, 96:40, 101:41,
-    105:42, 108:43, 112:44, 117:45, 125:(46,57),
-})
-_DAP_CL_50_64 = _inv({
-    70:27, 73:36, 75:38, 77:39, 79:40, 81:41, 83:42,
-    85:43, 88:44, 90:45, 94:46, 96:47, 99:48, 102:49,
-    104:50, 107:51, 109:52, 112:53, 117:54, 125:(55,64),
-})
-_GAC_SL_50_64 = _GAC_SL_22_29
-_GAC_CL_50_64 = _GAC_CL_22_29
-
-_DAC_65_74 = _inv({
-    72:20, 74:21, 75:22, 77:23, 79:24, 81:25, 82:26,
-    85:27, 87:28, 90:29, 93:30, 96:31, 97:32, 100:33,
-    103:34, 106:35, 109:36, 112:37, 115:38, 118:(39,40),
-    125:(41,57),
-})
-_DAS_65_74 = _inv({
-    72:14, 74:15, 77:16, 79:17, 81:18, 85:19, 88:20,
-    93:21, 96:22, 99:23, 104:24, 108:25, 112:26,
-    118:27, 125:(28,38),
-})
-_DAP_SL_65_74 = _inv({
-    70:28, 71:29, 73:30, 74:31, 75:32, 76:33, 78:34,
-    79:35, 80:36, 83:37, 85:38, 88:39, 91:40, 95:41,
-    97:42, 101:43, 105:44, 108:45, 112:46, 117:47,
-    125:(48,57),
-})
-_DAP_CL_65_74 = _inv({
-    69:27, 72:37, 74:39, 76:40, 78:41, 79:42, 83:43,
-    86:44, 88:45, 91:46, 95:47, 99:48, 102:49,
-    105:50, 108:51, 112:52, 117:53, 125:(54,64),
-})
-_GAC_SL_65_74 = _GAC_SL_22_29
-_GAC_CL_65_74 = _GAC_CL_22_29
-
-TAVOLA_A13 = {
-    "16-21": {
-        "gac_sl": _GAC_SL_16_21,
-        "gac_cl": _GAC_CL_16_21,
-        "dac":    _DAC_16_21,
-        "das":    _DAS_16_21,
-        "dap_sl": _DAP_SL_16_21,
-        "dap_cl": _DAP_CL_16_21,
-    },
-    "22-29": {
-        "gac_sl": _GAC_SL_22_29, "gac_cl": _GAC_CL_22_29,
-        "dac":    _DAC_22_29,    "das":    _DAS_22_29,
-        "dap_sl": _DAP_SL_22_29, "dap_cl": _DAP_CL_22_29,
-    },
-    "30-39": {
-        "gac_sl": _GAC_SL_30_39, "gac_cl": _GAC_CL_30_39,
-        "dac":    _DAC_30_39,    "das":    _DAS_30_39,
-        "dap_sl": _DAP_SL_30_39, "dap_cl": _DAP_CL_30_39,
-    },
-    "40-49": {
-        "gac_sl": _GAC_SL_40_49, "gac_cl": _GAC_CL_40_49,
-        "dac":    _DAC_40_49,    "das":    _DAS_40_49,
-        "dap_sl": _DAP_SL_40_49, "dap_cl": _DAP_CL_40_49,
-    },
-    "50-64": {
-        "gac_sl": _GAC_SL_50_64, "gac_cl": _GAC_CL_50_64,
-        "dac":    _DAC_50_64,    "das":    _DAS_50_64,
-        "dap_sl": _DAP_SL_50_64, "dap_cl": _DAP_CL_50_64,
-    },
-    "65-74": {
-        "gac_sl": _GAC_SL_65_74, "gac_cl": _GAC_CL_65_74,
-        "dac":    _DAC_65_74,    "das":    _DAS_65_74,
-        "dap_sl": _DAP_SL_65_74, "dap_cl": _DAP_CL_65_74,
-    },
-}
-
-PERCENTILI_A13 = {
-    40:"<0.1", 41:"<0.1", 42:"<0.1", 43:"<0.1", 44:"<0.1",
-    45:"<0.1", 46:"<0.1", 47:"<0.1", 48:"<0.1", 49:"<0.1",
-    50:"<0.1", 51:"0.1",  52:"0.1",  53:"0.1",  54:"0.1",
-    55:"0.1",  56:"0.2",  57:"0.2",  58:"0.3",  59:"0.4",
-    60:"0.5",  61:"1",    62:"1",    63:"1",    64:"1",
-    65:"1",    66:"1",    67:"2",    68:"2",    69:"2",
-    70:"3",    71:"3",    72:"5",    73:"5",    74:"6",
-    75:"7",    76:"8",    77:"9",    78:"10",   79:"12",
-    80:"13",   81:"14",   82:"16",   83:"18",   84:"19",
-    85:"21",   86:"23",   87:"25",   88:"27",   89:"30",
-    90:"32",   91:"34",   92:"37",   93:"39",   94:"42",
-    95:"45",   96:"46",   97:"47",   98:"50",   99:"53",
-    100:"55",  101:"58",  102:"61",  103:"63",  104:"66",
-    105:"68",  106:"70",  107:"73",  108:"75",  109:"77",
-    110:"79",  111:"81",  112:"82",  113:"84",  114:"86",
-    115:"87",  116:"88",  117:"90",  118:">90", 119:">90", 120:">90",
-}
+# PERCENTILI_A13 ora è definita in fondo alla sezione ABAS (da tabelle_abas.py)
 
 CHIAVE_AREA = {
     "comunicazione": "co", "uso_ambiente": "am",
@@ -949,104 +683,6 @@ def fascia_eta(eta):
     if 65 <= eta <= 74: return "65-74"
     if 75 <= eta <= 89: return "75-89"
     return None
-
-def _grezzo_a_pp(area_key, raw, fascia):
-    return TAVOLA_A12.get(fascia, {}).get(area_key, {}).get(raw)
-
-def _somma_a_composito(colonna, somma, fascia):
-    pairs = TAVOLA_A13.get(fascia, {}).get(colonna, [])
-    return _lookup(pairs, somma)
-
-# ── Funzione principale ABAS-II ───────────────────────────────────────
-def calcola_abas(risposte_abas):
-    import datetime
-    eta = risposte_abas.get('eta', 0)
-    ha_lavoro = risposte_abas.get('ha_lavoro', False)
-    risposte = risposte_abas.get('risposte', {})
-    suppongo = risposte_abas.get('suppongo', {})
-    fascia = fascia_eta(eta)
-
-    risultato = {}
-    risultato['Età soggetto'] = f"{eta} anni"
-    risultato['Fascia normativa'] = fascia if fascia else "non supportata (>49 anni)"
-    risultato['Ha un lavoro'] = 'Sì' if ha_lavoro else 'No'
-
-    if not fascia:
-        risultato['Nota'] = 'Tavole normative non disponibili per questa fascia d\'età'
-        return risultato
-
-    # Punteggi per area
-    pp_per_area = {}
-    for area, info in AREE_ABAS.items():
-        if area == 'lavoro' and not ha_lavoro:
-            continue
-        chiave = CHIAVE_AREA[area]
-        r = risposte.get(area, [])
-        grezzo = sum(r)
-        pp = _grezzo_a_pp(chiave, grezzo, fascia)
-        n_supp = sum(suppongo.get(area, []))
-        pp_per_area[chiave] = pp
-        pp_str = str(pp) if pp is not None else 'N/D'
-        risultato[f'{info["label"]} (grezzo/Pp/supp)'] = f"{grezzo}/{pp_str}/{n_supp}"
-
-    # Domini e compositi
-    dac_aree = ['co', 'sco', 'ac']
-    das_aree = ['tl', 'soc']
-    dap_sl_aree = ['am', 'vc', 'ss', 'cur']
-    dap_cl_aree = ['am', 'vc', 'ss', 'cur', 'lav']
-
-    def somma_pp(aree):
-        vals = [pp_per_area.get(a) for a in aree]
-        return sum(vals) if all(v is not None for v in vals) else None
-
-    dac_sum = somma_pp(dac_aree)
-    das_sum = somma_pp(das_aree)
-    dap_sum = somma_pp(dap_cl_aree if ha_lavoro else dap_sl_aree)
-
-    col_dap = 'dap_cl' if ha_lavoro else 'dap_sl'
-    col_gac = 'gac_cl' if ha_lavoro else 'gac_sl'
-
-    comp_dac = _somma_a_composito('dac', dac_sum, fascia) if dac_sum else None
-    comp_das = _somma_a_composito('das', das_sum, fascia) if das_sum else None
-    comp_dap = _somma_a_composito(col_dap, dap_sum, fascia) if dap_sum else None
-    gac_sum = (dac_sum or 0) + (das_sum or 0) + (dap_sum or 0)
-    comp_gac = _somma_a_composito(col_gac, gac_sum, fascia) if (dac_sum and das_sum and dap_sum) else None
-
-    def fmt(comp):
-        if comp is None: return 'N/D'
-        perc = PERCENTILI_A13.get(comp, '–')
-        return f"{comp} ({perc}° percentile)"
-
-    risultato['GAC (composito)'] = fmt(comp_gac)
-    risultato['DAC – Dominio Concettuale'] = fmt(comp_dac)
-    risultato['DAS – Dominio Sociale'] = fmt(comp_das)
-    risultato['DAP – Dominio Pratico'] = fmt(comp_dap)
-
-    note = []
-    if fascia != "16-21":
-        note.append("I punteggi compositi per fasce 22-74 sono derivati da tavole "
-                    "estratte via OCR dal manuale: verificare i valori critici sul "
-                    "manuale cartaceo prima dell'uso clinico.")
-    # Segnala se qualche composito è N/D per somma sotto il floor della tavola
-    if any(c is None for c in [comp_dac, comp_das, comp_dap, comp_gac]):
-        sotto_floor = []
-        t13 = TAVOLA_A13.get(fascia, {})
-        for nome, somma, col in [
-            ("DAC", dac_sum, 'dac'), ("DAS", das_sum, 'das'),
-            ("DAP", dap_sum, col_dap), ("GAC", gac_sum, col_gac),
-        ]:
-            if somma is not None:
-                pairs = t13.get(col, [])
-                if pairs and somma < pairs[0][0]:
-                    sotto_floor.append(f"{nome} (somma Pp={somma}, minimo tabulato={pairs[0][0]}→composito={pairs[0][1]})")
-        if sotto_floor:
-            note.append("Somme ponderali sotto il range normativo tabulato: " + "; ".join(sotto_floor) +
-                        ". Verificare sul manuale se esistono righe per compositi inferiori.")
-    if note:
-        risultato['Nota'] = " — ".join(note)
-
-    return risultato
-
 
 # ══════════════════════════════════════════════════════════════════════
 # ABAS-II: Forme aggiuntive — Autovalutazione, Insegnante, Genitore
@@ -1422,43 +1058,110 @@ TAVOLA_A10 = {
 },
 }
 
-# ── TAVOLA A.2 — Insegnante 17-21 compositi (somma Pp → composito) ───
-TAVOLA_A2 = {
-    "gac":    _inv({41:9, 42:10, 43:11, 44:12, 45:13, 46:14, 47:15, 48:16, 49:17,
-                    50:18, 51:19, 52:20, 53:21, 54:22, 55:23, 56:24, 57:25, 58:26,
-                    59:27, 60:28, 61:29, 62:30, 63:31, 64:32, 65:33, 66:34, 67:35,
-                    68:36, 69:37, 70:38, 71:39, 72:40, 73:41, 74:42, 75:43, 76:44,
-                    77:45, 78:47, 79:50, 81:56, 82:59, 83:62, 84:63, 85:64, 86:66,
-                    87:68, 88:70, 89:72, 90:74, 91:75, 92:77, 93:78, 94:79, 95:80,
-                    96:81, 97:82, 98:85, 99:86, 100:87, 101:88, 102:89, 103:91,
-                    104:92, 105:93, 106:94, 107:95, 108:96, 109:97, 110:98, 111:99,
-                    112:101, 113:102, 114:103, 115:104, 116:105, 117:107, 118:108,
-                    119:109, 120:113}),
-    "dac":    _inv({48:3, 51:4, 53:5, 55:6, 57:7, 59:8, 61:9, 63:10, 65:11, 67:12,
-                    69:13, 70:14, 72:15, 75:16, 77:17, 81:18, 83:19, 86:20, 87:21,
-                    89:22, 91:23, 93:24, 96:29, 99:30, 102:31, 107:32, 112:33,
-                    117:34, 120:35}),
-    "das":    _inv({54:2, 57:3, 60:4, 62:5, 64:6, 66:7, 68:8, 70:9, 72:10, 75:11,
-                    77:12, 85:14, 87:15, 93:16, 95:17, 104:18, 110:19, 115:20,
-                    120:21}),
-    "dap":    _inv({45:5, 47:6, 49:7, 51:8, 53:9, 55:10, 57:11, 59:12, 61:13, 63:14,
-                    65:15, 67:16, 69:17, 70:18, 72:19, 75:20, 77:21, 78:22, 81:26,
-                    83:28, 86:30, 87:31, 88:32, 90:33, 92:34, 99:36, 107:37}),
-}
+# Le vecchie tavole A.2 e A.5c sono state sostituite da tabelle_abas.A2 e tabelle_abas.A6.
 
-# ── TAVOLA A.5c — Genitore 17-21 compositi (somma Pp → composito) ────
-TAVOLA_A5C = {
-    "gac":    _inv({43:61, 44:64, 45:66, 46:68, 47:71, 48:73, 49:75, 50:78, 51:80,
-                    52:82, 53:85, 55:88, 57:89, 59:91, 60:93, 61:94, 62:95, 63:97,
-                    64:98, 65:99, 66:100, 67:101, 68:103, 69:104, 70:105, 71:106,
-                    72:107, 73:108, 74:110, 75:111, 76:112, 77:113, 78:115, 80:116}),
-    "dac":    _inv({49:24, 50:25, 51:26, 52:27, 55:29, 57:30, 59:31, 60:32, 63:33,
-                    66:34, 70:35, 74:36, 80:37}),
-    "das":    _inv({52:17, 54:18, 55:19, 57:20, 60:21, 68:23, 73:24, 77:25, 80:26}),
-    "dap":    _inv({57:42, 60:43, 63:45, 65:46, 67:47, 70:48, 73:49, 75:50, 80:51}),
-}
+# ══════════════════════════════════════════════════════════════════════
+# ABAS-II: motore di calcolo con lookup esatto
+# ----------------------------------------------------------------------
+# Le tavole verificate stanno in tabelle_abas.py (generato dall'Excel
+# compilato a mano dal manuale). Ogni tavola viene controllata all'avvio:
+# ogni grezzo e ogni somma possibile devono avere uno e un solo valore.
+# Niente approssimazioni: se un valore non è in tabella il risultato è
+# un errore esplicito, non il valore della riga vicina.
+# Le tavole non ancora ritrascritte usano i vecchi dati e l'output lo
+# segnala come NON VERIFICATO.
+# ══════════════════════════════════════════════════════════════════════
+import tabelle_abas as _TA
 
-# ── Etichette subscale per output ────────────────────────────────────
+PERCENTILI_A13 = _TA.PERCENTILI
+
+
+class TabellaABASError(ValueError):
+    pass
+
+
+def _espandi(tab, nome, contigua=True):
+    """{chiave: (min, max)} -> {valore: chiave}, controllando sovrapposizioni e buchi."""
+    out = {}
+    for chiave, (a, b) in sorted(tab.items(), key=lambda kv: kv[1][0]):
+        if b < a:
+            raise TabellaABASError(f"{nome}: intervallo rovesciato {a}-{b} per {chiave}")
+        for v in range(a, b + 1):
+            if v in out:
+                raise TabellaABASError(f"{nome}: il valore {v} compare sia per {out[v]} sia per {chiave}")
+            out[v] = chiave
+    if contigua and out:
+        buchi = [v for v in range(min(out), max(out) + 1) if v not in out]
+        if buchi:
+            raise TabellaABASError(f"{nome}: valori senza corrispondenza {buchi}")
+    return out
+
+
+def _da_vecchia_tabella_grezzi(t):
+    """I vecchi dizionari grezzo->Pp sono già espansi."""
+    return dict(t)
+
+
+def _da_vecchia_tabella_comp(pairs):
+    """I vecchi elenchi (somma_min, composito) -> {somma: composito} per le somme coperte."""
+    out = {}
+    for i, (s, comp) in enumerate(pairs):
+        fine = pairs[i + 1][0] - 1 if i + 1 < len(pairs) else s
+        for v in range(s, fine + 1):
+            out[v] = comp
+    return out
+
+
+def _norme(forma, fascia):
+    """Restituisce (grezzi, compositi, verificata) per forma e fascia.
+    grezzi: {sottoscala: {grezzo: Pp}}; compositi: {colonna: {somma: composito}}."""
+    verif = True
+    if forma == "etero":
+        if fascia in _TA.A12:
+            grezzi = {s: _espandi(t, f"A.12 {fascia} {s}") for s, t in _TA.A12[fascia].items()}
+            verif = "A12" not in _TA.DA_CONFERMARE
+        else:
+            grezzi = {s: _da_vecchia_tabella_grezzi(t) for s, t in TAVOLA_A12[fascia].items()}
+            verif = False
+        comp = {c: _espandi(t, f"A.13 {fascia} {c}") for c, t in _TA.A13[fascia].items()}
+    elif forma == "auto":
+        if fascia in _TA.A9:
+            grezzi = {s: _espandi(t, f"A.9 {fascia} {s}") for s, t in _TA.A9[fascia].items()}
+            verif = "A9" not in _TA.DA_CONFERMARE
+        else:
+            grezzi = {s: _da_vecchia_tabella_grezzi(t) for s, t in TAVOLA_A9[fascia].items()}
+            verif = False
+        nuove = _TA.A10.get(fascia, {})
+        comp = {}
+        for c, pairs in TAVOLA_A10[fascia].items():
+            if c in nuove:
+                comp[c] = _espandi(nuove[c], f"A.10 {fascia} {c}")
+                if not c.startswith("dap") and "A10_GAC_DAC_DAS" in _TA.DA_CONFERMARE:
+                    verif = False
+            else:
+                comp[c] = _da_vecchia_tabella_comp(pairs)
+                verif = False
+    elif forma == "insegnante":
+        grezzi = TAVOLA_A1
+        comp = {c: _espandi(t, f"A.2 {c}") for c, t in _TA.A2.items()}
+    elif forma == "genitore":
+        grezzi = TAVOLA_A5_G
+        comp = {c: _espandi(t, f"A.6 {c}") for c, t in _TA.A6.items()}
+    else:
+        raise ValueError(forma)
+    return grezzi, comp, verif
+
+
+def _controlla_tutte_le_tavole():
+    """Eseguito all'import: un errore di trascrizione blocca l'app invece di produrre numeri sbagliati."""
+    for f in ["16-21", "22-29", "30-39", "40-49", "50-64", "65-74"]:
+        _norme("etero", f)
+    for f in ["16-21", "22-29", "30-39", "40-49", "50-64", "65-74", "75-89"]:
+        _norme("auto", f)
+    _norme("insegnante", None)
+    _norme("genitore", None)
+
+
 _NOMI_SUB = {
     "co": "Comunicazione", "am": "Uso dell'ambiente",
     "sco": "Competenze scolastiche", "vc": "Vita a casa",
@@ -1466,131 +1169,240 @@ _NOMI_SUB = {
     "tl": "Tempo libero", "cur": "Cura di sé",
     "ac": "Autocontrollo", "soc": "Socializzazione", "lav": "Lavoro",
 }
+_SIGLE = {"co": "Co", "am": "Am", "sco": "Sco", "vc": "VC", "vs": "VS", "ss": "SS",
+          "tl": "TL", "cur": "Cur", "ac": "Ac", "soc": "Soc", "lav": "Lav"}
 
 
-def _calcola_abas_forma(grezzi, tabella_grezzi, tavola_comp, fascia_label,
-                         dominio_pratico_sl, dominio_pratico_cl,
-                         ha_lavoro, forma_nome):
-    """Nucleo comune di calcolo per tutte e tre le nuove forme ABAS."""
-    pp = {}
-    righe = {}
-    for sub, grezzo in grezzi.items():
-        pp_val = tabella_grezzi.get(sub, {}).get(int(grezzo))
-        pp[sub] = pp_val
-        pp_str = str(pp_val) if pp_val is not None else "N/D"
-        righe[f'{_NOMI_SUB.get(sub, sub)} (grezzo/Pp)'] = f"{grezzo}/{pp_str}"
+def descrizione_qualitativa(c):
+    """Fasce del protocollo ABAS-II (curva normale, pagina 11)."""
+    if c <= 70: return "Estremamente basso"
+    if c <= 79: return "Al limite"
+    if c <= 89: return "Sotto la media"
+    if c <= 109: return "Nella media"
+    if c <= 119: return "Sopra la media"
+    if c <= 129: return "Alto"
+    return "Estremamente alto"
 
-    def sp(aree):
-        vals = [pp.get(a) for a in aree]
-        return sum(vals) if all(v is not None for v in vals) else None
 
-    dac_aree = ["co", "sco", "ac"]
-    das_aree = ["tl", "soc"]
-    dap_sl_aree = dominio_pratico_sl
-    dap_cl_aree = dominio_pratico_cl
+_TAVOLE = {"etero": ("A.12", "A.13", "A13"), "auto": ("A.9", "A.10", "A10"),
+           "insegnante": ("A.1", "A.2", "A2"), "genitore": ("A.5", "A.6", "A6")}
 
-    dac_sum = sp(dac_aree)
-    das_sum = sp(das_aree)
-    dap_sum = sp(dap_cl_aree if ha_lavoro else dap_sl_aree)
-    col_dap = "dap_cl" if ha_lavoro else "dap_sl"
-    col_gac = "gac_cl" if ha_lavoro else "gac"
 
-    # Usa tavola specifica se ha "gac_sl"/"gac_cl", altrimenti usa "gac"
-    col_gac_key = "gac_sl" if "gac_sl" in tavola_comp else ("gac_cl" if ha_lavoro and "gac_cl" in tavola_comp else "gac")
-    col_dap_key = "dap_cl" if ha_lavoro and "dap_cl" in tavola_comp else ("dap_sl" if "dap_sl" in tavola_comp else "dap")
+def _calcola(forma, fascia, grezzi_in, ha_lavoro, supposizioni=None):
+    """Calcolo completo come nella Pagina riassuntiva e nelle Analisi supplementari del protocollo."""
+    grezzi_t, comp_t, verificata = _norme(forma, fascia)
+    tav_pp, tav_comp, chiave_ic = _TAVOLE[forma]
+    pratico = "vs" if forma == "insegnante" else "vc"
+    # Insegnante e genitore: tavole A.2/A.6 con una sola colonna, il DAP arriva a 76
+    # (4 sottoscale x 19), quindi Lavoro non entra nei compositi.
+    lavoro_nei_compositi = ha_lavoro and forma in ("etero", "auto") and fascia != "75-89"
 
-    comp_dac = _lookup(tavola_comp["dac"], dac_sum) if dac_sum is not None else None
-    comp_das = _lookup(tavola_comp["das"], das_sum) if das_sum is not None else None
-    comp_dap = _lookup(tavola_comp.get(col_dap_key, tavola_comp.get("dap", [])), dap_sum) if dap_sum is not None else None
-    gac_sum = (dac_sum or 0) + (das_sum or 0) + (dap_sum or 0)
-    comp_gac = _lookup(tavola_comp.get(col_gac_key, tavola_comp.get("gac", [])), gac_sum) if (dac_sum and das_sum and dap_sum) else None
+    errori, pp = [], {}
+    aree = []
+    for sub, grezzo in grezzi_in.items():
+        val = grezzi_t.get(sub, {}).get(int(grezzo))
+        if val is None:
+            errori.append(f"{_NOMI_SUB[sub]}: grezzo {grezzo} non presente in tabella")
+        pp[sub] = val
+        aree.append(sub)
 
-    def fmt(comp):
-        if comp is None: return "N/D"
-        perc = PERCENTILI_A13.get(comp, "–")
-        return f"{comp} ({perc}° percentile)"
+    domini = {
+        "DAC": ["co", "sco", "ac"],
+        "DAS": ["tl", "soc"],
+        "DAP": ["am", pratico, "ss", "cur"] + (["lav"] if lavoro_nei_compositi else []),
+    }
+    unica = fascia == "75-89" or forma in ("insegnante", "genitore")
+    if unica:
+        col = {"GAC": "gac", "DAC": "dac", "DAS": "das", "DAP": "dap"}
+    else:
+        suf = "cl" if lavoro_nei_compositi else "sl"
+        col = {"GAC": f"gac_{suf}", "DAC": "dac", "DAS": "das", "DAP": f"dap_{suf}"}
+    ic = _TA.IC[f"{chiave_ic}|{fascia or '17-21'}"]
 
-    res = {"Forma": forma_nome, "Fascia normativa": fascia_label, "Ha un lavoro": "Sì" if ha_lavoro else "No"}
-    res.update(righe)
-    res["GAC (composito)"] = fmt(comp_gac)
-    res["DAC – Dominio Concettuale"] = fmt(comp_dac)
-    res["DAS – Dominio Sociale"] = fmt(comp_das)
-    res["DAP – Dominio Pratico"] = fmt(comp_dap)
+    somme = {d: (sum(pp[a] for a in a_) if all(pp.get(a) is not None for a in a_) else None)
+             for d, a_ in domini.items()}
+    somme["GAC"] = sum(somme[d] for d in domini) if all(somme[d] is not None for d in domini) else None
 
-    sotto_floor = []
-    for nome, somma, col_key in [
-        ("DAC", dac_sum, "dac"), ("DAS", das_sum, "das"),
-        ("DAP", dap_sum, col_dap_key), ("GAC", gac_sum, col_gac_key),
-    ]:
-        if somma is not None:
-            pairs = tavola_comp.get(col_key, tavola_comp.get("dap", tavola_comp.get("gac", [])))
-            if pairs and somma < pairs[0][0]:
-                sotto_floor.append(f"{nome} (Pp={somma}, min tabulato={pairs[0][0]}→comp={pairs[0][1]})")
-    if sotto_floor:
-        res["Nota"] = ("Somme ponderali sotto il range normativo tabulato — "
-                       + "; ".join(sotto_floor)
-                       + ". Verificare sul manuale se esistono righe per compositi inferiori.")
-    return res
+    compositi = {}
+    for d in ["GAC", "DAC", "DAS", "DAP"]:
+        s = somme[d]
+        if s is None:
+            continue
+        c = comp_t[col[d]].get(s)
+        if c is None:
+            errori.append(f"{d}: somma dei Pp {s} non presente nella tavola dei compositi")
+            continue
+        compositi[d] = {
+            "somma": s, "composito": c, "percentile": PERCENTILI_A13[c],
+            "ic90": (c - ic["90"][col[d]], c + ic["90"][col[d]]),
+            "ic95": (c - ic["95"][col[d]], c + ic["95"][col[d]]),
+            "descrizione": descrizione_qualitativa(c),
+        }
+
+    # Analisi supplementari: media dei Pp delle aree che entrano nel GAC e scarto di ogni area
+    aree_gac = [a for d in ["DAC", "DAS", "DAP"] for a in domini[d]]
+    media = None
+    if all(pp.get(a) is not None for a in aree_gac):
+        media = sum(pp[a] for a in aree_gac) / len(aree_gac)
+    differenze = {}
+    for a, b in [("DAC", "DAS"), ("DAC", "DAP"), ("DAS", "DAP")]:
+        if a in compositi and b in compositi:
+            differenze[f"{a}-{b}"] = compositi[a]["composito"] - compositi[b]["composito"]
+
+    note = []
+    if ha_lavoro and not lavoro_nei_compositi:
+        note.append("Lavoro è riportato come area ma non entra nei compositi"
+                    + (" (fascia 75-89)." if fascia == "75-89" else " (tavola con colonna unica)."))
+    if not verificata:
+        note.append("ATTENZIONE: per questa forma e fascia alcune tavole normative devono ancora essere "
+                    "confrontate con il manuale cartaceo. Non usare questi punteggi a fini clinici.")
+    if errori:
+        note.append("ERRORE: " + "; ".join(errori) + ".")
+
+    return {
+        "tav_pp": tav_pp, "tav_comp": tav_comp, "aree": aree, "grezzi": grezzi_in, "pp": pp,
+        "supposizioni": supposizioni or {}, "domini": domini, "compositi": compositi,
+        "media": media, "aree_gac": aree_gac, "differenze": differenze, "note": note,
+        "lavoro_nei_compositi": lavoro_nei_compositi,
+    }
+
+
+_STILE_ABAS = ("border-collapse:collapse;margin:6px 0 14px 0;font-size:13px")
+_TD = "border:1px solid #CBD5E1;padding:3px 8px;text-align:center"
+_TH = "border:1px solid #CBD5E1;padding:3px 8px;background:#E0F2F1;text-align:center"
+
+
+def _html_abas(intestazione, r):
+    def riga(celle, th=False):
+        st_ = _TH if th else _TD
+        return "<tr>" + "".join(f"<td style='{st_}'>{c}</td>" for c in celle) + "</tr>"
+
+    h = [f"<p>{' · '.join(f'<strong>{k}:</strong> {v}' for k, v in intestazione.items())}</p>"]
+
+    # 1. Conversione del punteggio grezzo in punteggio ponderato
+    h.append(f"<p><strong>Conversione del punteggio grezzo in punteggio ponderato</strong> (tab. {r['tav_pp']})</p>")
+    h.append(f"<table style='{_STILE_ABAS}'>")
+    con_supp = bool(r["supposizioni"])
+    h.append(riga(["Area adattiva", "P.ggio grezzo", "P.ggio ponderato"] + (["Risposte 'suppongo'"] if con_supp else []), True))
+    for a in r["aree"]:
+        nome = f"{_NOMI_SUB[a]} ({_SIGLE[a]})"
+        if a == "lav" and not r["lavoro_nei_compositi"]:
+            nome += " *"
+        pp = r["pp"][a] if r["pp"][a] is not None else "ERRORE"
+        h.append(riga([nome, r["grezzi"][a], pp] + ([r["supposizioni"].get(a, 0)] if con_supp else [])))
+    h.append("</table>")
+
+    # 2. Conversione della somma dei p.ggi ponderati in p.ggio composito
+    h.append(f"<p><strong>Conversione della somma dei punteggi ponderati in punteggio composito</strong> (tab. {r['tav_comp']})</p>")
+    h.append(f"<table style='{_STILE_ABAS}'>")
+    h.append(riga(["Composito", "Somma p.ggi ponderati", "P.ggio composito", "Percentile",
+                   "Int. confidenza 90%", "Int. confidenza 95%", "Descrizione qualitativa"], True))
+    nomi = {"GAC": "GAC", "DAC": "Concettuale (DAC)", "DAS": "Sociale (DAS)", "DAP": "Pratico (DAP)"}
+    for d in ["GAC", "DAC", "DAS", "DAP"]:
+        c = r["compositi"].get(d)
+        if c is None:
+            h.append(riga([nomi[d], "–", "non calcolabile", "", "", "", ""]))
+        else:
+            h.append(riga([nomi[d], c["somma"], f"<strong>{c['composito']}</strong>", c["percentile"],
+                           f"{c['ic90'][0]}–{c['ic90'][1]}", f"{c['ic95'][0]}–{c['ic95'][1]}", c["descrizione"]]))
+    h.append("</table>")
+
+    # 3. Analisi supplementari (parte calcolabile senza le tavole dell'Appendice B)
+    if r["media"] is not None:
+        n = len(r["aree_gac"])
+        h.append(f"<p><strong>Analisi supplementari</strong>: media dei punteggi ponderati ({n} aree) = "
+                 f"{r['media']:.2f}</p>")
+        h.append(f"<table style='{_STILE_ABAS}'>")
+        h.append(riga(["Dominio", "Area", "P.ggio ponderato", "Differenza dalla media"], True))
+        for d in ["DAC", "DAS", "DAP"]:
+            for a in r["domini"][d]:
+                diff = r["pp"][a] - r["media"]
+                h.append(riga([d, _NOMI_SUB[a], r["pp"][a], f"{diff:+.2f}"]))
+        h.append("</table>")
+    if r["differenze"]:
+        h.append(f"<table style='{_STILE_ABAS}'>")
+        h.append(riga(["Confronto", "Punteggio 1", "Punteggio 2", "Differenza"], True))
+        nomi_c = {"DAC-DAS": "Concettuale-Sociale", "DAC-DAP": "Concettuale-Pratico", "DAS-DAP": "Sociale-Pratico"}
+        for k, v in r["differenze"].items():
+            a, b = k.split("-")
+            h.append(riga([nomi_c[k], f"{a} {r['compositi'][a]['composito']}",
+                           f"{b} {r['compositi'][b]['composito']}", f"{v:+d}"]))
+        h.append("</table>")
+        h.append("<p style='font-size:12px;color:#555'>Valori critici, punti di forza/debolezza (F/D) e "
+                 "frequenze nel campione di standardizzazione richiedono le tavole B-15/B-27 dell'Appendice B, "
+                 "non incluse nel calcolatore.</p>")
+    note = list(r["note"])
+    if any(a == "lav" and not r["lavoro_nei_compositi"] for a in r["aree"]):
+        note.insert(0, "* Lavoro non entra nei compositi.")
+    if note:
+        h.append("<p style='color:#B91C1C'>" + " ".join(note) + "</p>")
+    return "".join(h)
+
+
+def _risultato_abas(intestazione, r):
+    """Formato restituito alle funzioni chiamanti: HTML pronto per l'email più i valori principali."""
+    out = {"_html": _html_abas(intestazione, r)}
+    for d, c in r["compositi"].items():
+        out[d] = c["composito"]
+    return out
+
+
+def calcola_abas(risposte_abas):
+    eta = risposte_abas.get('eta', 0)
+    ha_lavoro = risposte_abas.get('ha_lavoro', False)
+    risposte = risposte_abas.get('risposte', {})
+    suppongo = risposte_abas.get('suppongo', {})
+    fascia = fascia_eta(eta)
+    if not fascia or fascia == "75-89":
+        return {"Forma": "Eterovalutazione adulto", "Età": f"{eta} anni",
+                "Nota": "Tavole normative di eterovalutazione disponibili solo per 16-74 anni."}
+    grezzi, supp = {}, {}
+    for area in AREE_ABAS:
+        if area == 'lavoro' and not ha_lavoro:
+            continue
+        k = CHIAVE_AREA[area]
+        grezzi[k] = sum(risposte.get(area, []))
+        supp[k] = sum(suppongo.get(area, []))
+    r = _calcola("etero", fascia, grezzi, ha_lavoro, supp)
+    return _risultato_abas({"Forma": "Eterovalutazione adulto", "Età": f"{eta} anni",
+                            "Fascia normativa": fascia, "Lavoro": "Sì" if ha_lavoro else "No"}, r)
 
 
 def calcola_abas_autovalutazione(dati):
     eta = dati.get("eta", 0)
     ha_lavoro = dati.get("ha_lavoro", False)
-    grezzi = dati.get("grezzi", {})
     fascia = fascia_eta(eta)
     if not fascia:
         return {"Forma": "Autovalutazione adulto", "Nota": f"Età {eta} fuori range (16-89)"}
-    # La fascia 75-89 non ha sottoscala Lavoro
-    if fascia == "75-89":
-        ha_lavoro = False
-    subs_base = ["co", "am", "sco", "vc", "ss", "tl", "cur", "ac", "soc"]
-    if ha_lavoro:
-        subs_base.append("lav")
-    grezzi_f = {k: grezzi.get(k, 0) for k in subs_base}
-    tavola_comp = TAVOLA_A10[fascia]
-    res = _calcola_abas_forma(
-        grezzi_f, TAVOLA_A9[fascia], tavola_comp, fascia, ha_lavoro=ha_lavoro,
-        dominio_pratico_sl=["am","vc","ss","cur"],
-        dominio_pratico_cl=["am","vc","ss","cur","lav"],
-        forma_nome="Autovalutazione adulto (16-89)"
-    )
-    return res
+    subs = ["co", "am", "sco", "vc", "ss", "tl", "cur", "ac", "soc"] + (["lav"] if ha_lavoro and fascia != "75-89" else [])
+    grezzi = {k: dati.get("grezzi", {}).get(k, 0) for k in subs}
+    r = _calcola("auto", fascia, grezzi, ha_lavoro and fascia != "75-89")
+    return _risultato_abas({"Forma": "Autovalutazione adulto", "Età": f"{eta} anni", "Fascia normativa": fascia,
+                            "Lavoro": "Sì" if ha_lavoro else "No"}, r)
+
+
+def _calcola_17_21(forma, nome, pratico, dati):
+    eta = dati.get("eta", 0)
+    ha_lavoro = dati.get("ha_lavoro", False)
+    if not (17 <= eta <= 21):
+        return {"Forma": nome, "Nota": f"Età {eta} non supportata (17-21 anni)"}
+    subs = ["co", "am", "sco", pratico, "ss", "tl", "cur", "ac", "soc"] + (["lav"] if ha_lavoro else [])
+    grezzi = {k: dati.get("grezzi", {}).get(k, 0) for k in subs}
+    r = _calcola(forma, None, grezzi, ha_lavoro)
+    return _risultato_abas({"Forma": nome, "Età": f"{eta} anni", "Fascia normativa": "17-21",
+                            "Lavoro": "Sì" if ha_lavoro else "No"}, r)
 
 
 def calcola_abas_insegnante(dati):
-    eta = dati.get("eta", 0)
-    ha_lavoro = dati.get("ha_lavoro", False)
-    grezzi = dati.get("grezzi", {})
-    if not (17 <= eta <= 21):
-        return {"Forma": "Insegnante", "Nota": f"Età {eta} non supportata (17-21 anni)"}
-    subs_base = ["co", "am", "sco", "vs", "ss", "tl", "cur", "ac", "soc"]
-    if ha_lavoro:
-        subs_base.append("lav")
-    grezzi_f = {k: grezzi.get(k, 0) for k in subs_base}
-    return _calcola_abas_forma(
-        grezzi_f, TAVOLA_A1, TAVOLA_A2, "17-21", ha_lavoro=ha_lavoro,
-        dominio_pratico_sl=["am","vs","ss","cur"],
-        dominio_pratico_cl=["am","vs","ss","cur","lav"],
-        forma_nome="Insegnante (17-21)"
-    )
+    return _calcola_17_21("insegnante", "Insegnante (17-21)", "vs", dati)
 
 
 def calcola_abas_genitore(dati):
-    eta = dati.get("eta", 0)
-    ha_lavoro = dati.get("ha_lavoro", False)
-    grezzi = dati.get("grezzi", {})
-    if not (17 <= eta <= 21):
-        return {"Forma": "Genitore", "Nota": f"Età {eta} non supportata (17-21 anni)"}
-    subs_base = ["co", "am", "sco", "vc", "ss", "tl", "cur", "ac", "soc"]
-    if ha_lavoro:
-        subs_base.append("lav")
-    grezzi_f = {k: grezzi.get(k, 0) for k in subs_base}
-    return _calcola_abas_forma(
-        grezzi_f, TAVOLA_A5_G, TAVOLA_A5C, "17-21", ha_lavoro=ha_lavoro,
-        dominio_pratico_sl=["am","vc","ss","cur"],
-        dominio_pratico_cl=["am","vc","ss","cur","lav"],
-        forma_nome="Genitore (17-21)"
-    )
+    return _calcola_17_21("genitore", "Genitore (17-21)", "vc", dati)
+
+
+_controlla_tutte_le_tavole()
+
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -1818,6 +1630,9 @@ def formatta_risultati_email(dati_paziente, risultati, wurs_extra=""):
         html += "<p>Nessun test è stato compilato in questa sessione.</p>"
     else:
         for test, res in risultati.items():
+            if "_html" in res:
+                html += f"<h3>{test}</h3>" + res["_html"]
+                continue
             html += f"<h3>{test}</h3><ul>"
             for chiave, valore in res.items():
                 html += f"<li><strong>{chiave.replace('_', ' ').capitalize()}:</strong> {valore}</li>"
