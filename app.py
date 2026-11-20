@@ -485,7 +485,7 @@ def sezione_abas(data_nascita):
 
         st.session_state.risposte['abas']['eta'] = eta_abas
         if fascia != "16-21":
-            st.info(f"Età rilevata: {eta_abas} anni (fascia {fascia}). I punteggi compositi (GAC, DAC, DAS, DAP) sono calcolati per tutte le fasce 16–74. Per fasce > 21 i valori compositi sono derivati da OCR del manuale: verificare i casi critici sul cartaceo.")
+            st.info(f"Età rilevata: {eta_abas} anni (fascia {fascia}). I punteggi compositi (GAC, DAC, DAS, DAP) sono calcolati per tutte le fasce 16–74 con tavole trascritte dal manuale. Se nel risultato compare un avviso, per quella fascia le tavole non sono ancora tutte verificate.")
 
         ha_lavoro = st.radio(
             "Il soggetto svolge attualmente un'attività lavorativa?",
@@ -529,7 +529,7 @@ sezione_abas(data_nascita)
 # ── ABAS-II Autovalutazione ───────────────────────────────────────────────────
 @st.fragment
 def sezione_abas_autovalutazione(data_nascita):
-    with st.expander("Questionario ABAS-II — Autovalutazione adulto (16-74)"):
+    with st.expander("Questionario ABAS-II — Autovalutazione adulto (16-89)"):
         st.info(
             "Questa sezione è compilata direttamente dall'adulto che si autovaluta. "
             "Inserire il **punteggio grezzo totale** di ciascuna subscala dal protocollo cartaceo."
@@ -537,7 +537,7 @@ def sezione_abas_autovalutazione(data_nascita):
         eta = int((datetime.date.today() - data_nascita).days / 365.25)
         fascia = fascia_eta(eta)
         if fascia is None:
-            st.warning(f"Età {eta} anni fuori dall'intervallo 16–74. Non calcolabile.")
+            st.warning(f"Età {eta} anni fuori dall'intervallo 16–89. Non calcolabile.")
             return
         st.session_state.risposte['abas_auto']['eta'] = eta
         st.info(f"Età: {eta} anni — fascia {fascia}")
@@ -589,16 +589,16 @@ def sezione_abas_insegnante(data_nascita):
         st.session_state.risposte['abas_ins']['ha_lavoro'] = (ha_lav == "Sì")
 
         _SUBS_INS = [
-            ("co",  "Comunicazione (Co)", 100),
-            ("am",  "Uso dell'ambiente (Am)", 100),
-            ("sco", "Competenze scolastiche (Sco)", 100),
-            ("vs",  "Vita a scuola (VS)", 100),
-            ("ss",  "Salute e sicurezza (SS)", 100),
-            ("tl",  "Tempo libero (TL)", 100),
-            ("cur", "Cura di sé (Cur)", 100),
-            ("ac",  "Autocontrollo (Ac)", 100),
-            ("soc", "Socializzazione (Soc)", 100),
-            ("lav", "Lavoro (Lav)", 100),
+            ("co",  "Comunicazione (Co)", 66),
+            ("am",  "Uso dell'ambiente (Am)", 45),
+            ("sco", "Competenze scolastiche (Sco)", 66),
+            ("vs",  "Vita a scuola (VS)", 60),
+            ("ss",  "Salute e sicurezza (SS)", 48),
+            ("tl",  "Tempo libero (TL)", 51),
+            ("cur", "Cura di sé (Cur)", 57),
+            ("ac",  "Autocontrollo (Ac)", 63),
+            ("soc", "Socializzazione (Soc)", 60),
+            ("lav", "Lavoro (Lav)", 63),
         ]
         for sub, label, max_v in _SUBS_INS:
             if sub == "lav" and not st.session_state.risposte['abas_ins']['ha_lavoro']:
@@ -630,16 +630,16 @@ def sezione_abas_genitore(data_nascita):
         st.session_state.risposte['abas_gen']['ha_lavoro'] = (ha_lav == "Sì")
 
         _SUBS_GEN = [
-            ("co",  "Comunicazione (Co)", 100),
-            ("am",  "Uso dell'ambiente (Am)", 100),
-            ("sco", "Competenze scolastiche (Sco)", 100),
-            ("vc",  "Vita a casa (VC)", 100),
-            ("ss",  "Salute e sicurezza (SS)", 100),
-            ("tl",  "Tempo libero (TL)", 100),
-            ("cur", "Cura di sé (Cur)", 100),
-            ("ac",  "Autocontrollo (Ac)", 100),
-            ("soc", "Socializzazione (Soc)", 100),
-            ("lav", "Lavoro (Lav)", 100),
+            ("co",  "Comunicazione (Co)", 72),
+            ("am",  "Uso dell'ambiente (Am)", 69),
+            ("sco", "Competenze scolastiche (Sco)", 69),
+            ("vc",  "Vita a casa (VC)", 75),
+            ("ss",  "Salute e sicurezza (SS)", 66),
+            ("tl",  "Tempo libero (TL)", 66),
+            ("cur", "Cura di sé (Cur)", 72),
+            ("ac",  "Autocontrollo (Ac)", 75),
+            ("soc", "Socializzazione (Soc)", 69),
+            ("lav", "Lavoro (Lav)", 63),
         ]
         for sub, label, max_v in _SUBS_GEN:
             if sub == "lav" and not st.session_state.risposte['abas_gen']['ha_lavoro']:
