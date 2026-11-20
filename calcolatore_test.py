@@ -1188,7 +1188,7 @@ _TAVOLE = {"etero": ("A.12", "A.13", "A13"), "auto": ("A.9", "A.10", "A10"),
            "insegnante": ("A.1", "A.2", "A2"), "genitore": ("A.5", "A.6", "A6")}
 
 
-def _calcola(forma, fascia, grezzi_in, ha_lavoro, supposizioni=None):
+def _calcola(forma, fascia, grezzi_in, ha_lavoro, supposizioni=None, omessi=None):
     """Calcolo completo come nella Pagina riassuntiva e nelle Analisi supplementari del protocollo."""
     grezzi_t, comp_t, verificata = _norme(forma, fascia)
     tav_pp, tav_comp, chiave_ic = _TAVOLE[forma]
@@ -1253,6 +1253,10 @@ def _calcola(forma, fascia, grezzi_in, ha_lavoro, supposizioni=None):
     if ha_lavoro and not lavoro_nei_compositi:
         note.append("Lavoro è riportato come area ma non entra nei compositi"
                     + (" (fascia 75-89)." if fascia == "75-89" else " (tavola con colonna unica)."))
+    tot_omessi = sum((omessi or {}).values())
+    if tot_omessi:
+        note.append(f"ATTENZIONE: {tot_omessi} item senza risposta, conteggiati come 0: "
+                    "i punteggi delle aree indicate possono essere sottostimati.")
     if not verificata:
         note.append("ATTENZIONE: per questa forma e fascia alcune tavole normative devono ancora essere "
                     "confrontate con il manuale cartaceo. Non usare questi punteggi a fini clinici.")
@@ -1261,7 +1265,7 @@ def _calcola(forma, fascia, grezzi_in, ha_lavoro, supposizioni=None):
 
     return {
         "tav_pp": tav_pp, "tav_comp": tav_comp, "aree": aree, "grezzi": grezzi_in, "pp": pp,
-        "supposizioni": supposizioni or {}, "domini": domini, "compositi": compositi,
+        "supposizioni": supposizioni or {}, "omessi": omessi or {}, "domini": domini, "compositi": compositi,
         "media": media, "aree_gac": aree_gac, "differenze": differenze, "note": note,
         "lavoro_nei_compositi": lavoro_nei_compositi,
     }
@@ -1283,13 +1287,16 @@ def _html_abas(intestazione, r):
     h.append(f"<p><strong>Conversione del punteggio grezzo in punteggio ponderato</strong> (tab. {r['tav_pp']})</p>")
     h.append(f"<table style='{_STILE_ABAS}'>")
     con_supp = bool(r["supposizioni"])
-    h.append(riga(["Area adattiva", "P.ggio grezzo", "P.ggio ponderato"] + (["Risposte 'suppongo'"] if con_supp else []), True))
+    con_om = any(r["omessi"].values())
+    h.append(riga(["Area adattiva", "P.ggio grezzo", "P.ggio ponderato"] + (["Risposte 'suppongo'"] if con_supp else [])
+                  + (["Item senza risposta"] if con_om else []), True))
     for a in r["aree"]:
         nome = f"{_NOMI_SUB[a]} ({_SIGLE[a]})"
         if a == "lav" and not r["lavoro_nei_compositi"]:
             nome += " *"
         pp = r["pp"][a] if r["pp"][a] is not None else "ERRORE"
-        h.append(riga([nome, r["grezzi"][a], pp] + ([r["supposizioni"].get(a, 0)] if con_supp else [])))
+        h.append(riga([nome, r["grezzi"][a], pp] + ([r["supposizioni"].get(a, 0)] if con_supp else [])
+                      + ([r["omessi"].get(a, 0)] if con_om else [])))
     h.append("</table>")
 
     # 2. Conversione della somma dei p.ggi ponderati in p.ggio composito
@@ -1347,36 +1354,47 @@ def _risultato_abas(intestazione, r):
     return out
 
 
-def calcola_abas(risposte_abas):
-    eta = risposte_abas.get('eta', 0)
-    ha_lavoro = risposte_abas.get('ha_lavoro', False)
-    risposte = risposte_abas.get('risposte', {})
-    suppongo = risposte_abas.get('suppongo', {})
-    fascia = fascia_eta(eta)
-    if not fascia or fascia == "75-89":
-        return {"Forma": "Eterovalutazione adulto", "Età": f"{eta} anni",
-                "Nota": "Tavole normative di eterovalutazione disponibili solo per 16-74 anni."}
-    grezzi, supp = {}, {}
+def _grezzi_da_item(dati, ha_lavoro):
+    """Somma degli item per area; le risposte mancanti contano 0 e vengono segnalate."""
+    risposte = dati.get('risposte', {})
+    suppongo = dati.get('suppongo', {})
+    grezzi, supp, omessi = {}, {}, {}
     for area in AREE_ABAS:
         if area == 'lavoro' and not ha_lavoro:
             continue
         k = CHIAVE_AREA[area]
-        grezzi[k] = sum(risposte.get(area, []))
-        supp[k] = sum(suppongo.get(area, []))
-    r = _calcola("etero", fascia, grezzi, ha_lavoro, supp)
+        valori = risposte.get(area, [])
+        grezzi[k] = sum(v for v in valori if v is not None)
+        omessi[k] = sum(v is None for v in valori)
+        supp[k] = sum(bool(x) for x in suppongo.get(area, []))
+    return grezzi, supp, omessi
+
+
+def calcola_abas(risposte_abas):
+    eta = risposte_abas.get('eta', 0)
+    ha_lavoro = risposte_abas.get('ha_lavoro', False)
+    fascia = fascia_eta(eta)
+    if not fascia or fascia == "75-89":
+        return {"Forma": "Eterovalutazione adulto", "Età": f"{eta} anni",
+                "Nota": "Tavole normative di eterovalutazione disponibili solo per 16-74 anni."}
+    grezzi, supp, omessi = _grezzi_da_item(risposte_abas, ha_lavoro)
+    r = _calcola("etero", fascia, grezzi, ha_lavoro, supp, omessi)
     return _risultato_abas({"Forma": "Eterovalutazione adulto", "Età": f"{eta} anni",
                             "Fascia normativa": fascia, "Lavoro": "Sì" if ha_lavoro else "No"}, r)
 
 
 def calcola_abas_autovalutazione(dati):
     eta = dati.get("eta", 0)
-    ha_lavoro = dati.get("ha_lavoro", False)
     fascia = fascia_eta(eta)
     if not fascia:
         return {"Forma": "Autovalutazione adulto", "Nota": f"Età {eta} fuori range (16-89)"}
-    subs = ["co", "am", "sco", "vc", "ss", "tl", "cur", "ac", "soc"] + (["lav"] if ha_lavoro and fascia != "75-89" else [])
-    grezzi = {k: dati.get("grezzi", {}).get(k, 0) for k in subs}
-    r = _calcola("auto", fascia, grezzi, ha_lavoro and fascia != "75-89")
+    ha_lavoro = dati.get("ha_lavoro", False) and fascia != "75-89"
+    if "risposte" in dati:   # protocollo compilato item per item nell'app
+        grezzi, supp, omessi = _grezzi_da_item(dati, ha_lavoro)
+    else:                    # grezzi totali già calcolati sul cartaceo
+        subs = ["co", "am", "sco", "vc", "ss", "tl", "cur", "ac", "soc"] + (["lav"] if ha_lavoro else [])
+        grezzi, supp, omessi = {k: dati.get("grezzi", {}).get(k, 0) for k in subs}, None, None
+    r = _calcola("auto", fascia, grezzi, ha_lavoro, supp, omessi)
     return _risultato_abas({"Forma": "Autovalutazione adulto", "Età": f"{eta} anni", "Fascia normativa": fascia,
                             "Lavoro": "Sì" if ha_lavoro else "No"}, r)
 
@@ -1387,10 +1405,56 @@ def _calcola_17_21(forma, nome, pratico, dati):
     if not (17 <= eta <= 21):
         return {"Forma": nome, "Nota": f"Età {eta} non supportata (17-21 anni)"}
     subs = ["co", "am", "sco", pratico, "ss", "tl", "cur", "ac", "soc"] + (["lav"] if ha_lavoro else [])
-    grezzi = {k: dati.get("grezzi", {}).get(k, 0) for k in subs}
-    r = _calcola(forma, None, grezzi, ha_lavoro)
+    supp = omessi = None
+    if dati.get("risposte"):   # protocollo compilato item per item nell'app
+        grezzi = {k: sum(v for v in dati["risposte"][k] if v is not None) for k in subs}
+        omessi = {k: sum(v is None for v in dati["risposte"][k]) for k in subs}
+        supp = {k: sum(bool(x) for x in dati["suppongo"][k]) for k in subs}
+    else:
+        grezzi = {k: dati.get("grezzi", {}).get(k, 0) for k in subs}
+    r = _calcola(forma, None, grezzi, ha_lavoro, supp, omessi)
     return _risultato_abas({"Forma": nome, "Età": f"{eta} anni", "Fascia normativa": "17-21",
                             "Lavoro": "Sì" if ha_lavoro else "No"}, r)
+
+
+
+# ══════════════════════════════════════════════════════════════════════
+# ABAS-II Genitore (libretto 5-21 anni): struttura del protocollo
+# Il testo delle domande non è nel codice: viene letto da item_abas_genitore.json,
+# generato dall'Excel compilato dal clinico a partire dal proprio protocollo.
+# Finché il file manca o è incompleto, l'app chiede i punteggi grezzi totali.
+# ══════════════════════════════════════════════════════════════════════
+import json as _json
+import os as _os
+
+AREE_GENITORE = [  # (sigla, nome, dominio, numero di item nel libretto)
+    ("co", "Comunicazione", "DAC", 24),
+    ("am", "Uso dell'ambiente", "DAP", 23),
+    ("sco", "Competenze scolastiche", "DAC", 23),
+    ("vc", "Vita a casa", "DAP", 25),
+    ("ss", "Salute e sicurezza", "DAP", 22),
+    ("tl", "Tempo libero", "DAS", 22),
+    ("cur", "Cura di sé", "DAP", 24),
+    ("ac", "Autocontrollo", "DAC", 25),
+    ("soc", "Socializzazione", "DAS", 23),
+    ("lav", "Lavoro", "–", 21),
+]
+
+
+def _carica_item(nome_file, struttura):
+    percorso = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), nome_file)
+    if not _os.path.exists(percorso):
+        return None
+    with open(percorso, encoding="utf-8") as f:
+        dati = _json.load(f)
+    for sigla, nome, _, n in struttura:
+        testi = dati.get(sigla, [])
+        if len(testi) != n or not all(isinstance(t, str) and t.strip() for t in testi):
+            raise ValueError(f"{nome_file}: l'area {nome} deve avere {n} item compilati, ne ha {len(testi)}")
+    return dati
+
+
+ITEM_GENITORE = _carica_item("item_abas_genitore.json", AREE_GENITORE)
 
 
 def calcola_abas_insegnante(dati):

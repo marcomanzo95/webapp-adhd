@@ -4,7 +4,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-from calcolatore_test import calcola_tutti_i_risultati, formatta_risultati_email, AREE_ABAS, OPZIONI_ABAS, fascia_eta
+from calcolatore_test import calcola_tutti_i_risultati, formatta_risultati_email, AREE_ABAS, OPZIONI_ABAS, fascia_eta, AREE_GENITORE, ITEM_GENITORE
 
 st.set_page_config(
     page_title="Valutazione ADHD - Test Autosomministrati",
@@ -48,10 +48,15 @@ if 'risposte' not in st.session_state:
         'abas': {
             'eta': 0,
             'ha_lavoro': False,
-            'risposte': {area: [0] * len(info['items']) for area, info in AREE_ABAS.items()},
+            'risposte': {area: [None] * len(info['items']) for area, info in AREE_ABAS.items()},
             'suppongo': {area: [False] * len(info['items']) for area, info in AREE_ABAS.items()},
         },
-        'abas_auto': {'eta': 0, 'ha_lavoro': False, 'grezzi': {s:0 for s in ['co','am','sco','vc','ss','tl','cur','ac','soc','lav']}},
+        'abas_auto': {
+            'eta': 0,
+            'ha_lavoro': False,
+            'risposte': {area: [None] * len(info['items']) for area, info in AREE_ABAS.items()},
+            'suppongo': {area: [False] * len(info['items']) for area, info in AREE_ABAS.items()},
+        },
         'abas_ins':  {'eta': 0, 'ha_lavoro': False, 'grezzi': {s:0 for s in ['co','am','sco','vs','ss','tl','cur','ac','soc','lav']}},
         'abas_gen':  {'eta': 0, 'ha_lavoro': False, 'grezzi': {s:0 for s in ['co','am','sco','vc','ss','tl','cur','ac','soc','lav']}},
     }
@@ -466,62 +471,108 @@ def sezione_mews():
 sezione_mews()
 
 
+
+# ── ABAS-II: protocollo adulto 16-89 item per item ────────────────────────────
+# Stesso libretto per eterovalutazione e autovalutazione: cambiano solo le istruzioni
+# e le tavole normative (A.12/A.13 eterovalutazione, A.9/A.10 autovalutazione).
+def _legenda_abas(azione):
+    st.markdown(
+        f"Per ogni comportamento indica **quanto spesso {azione} correttamente, senza aiuto, "
+        "quando la situazione lo richiede**. Rispondi a **tutte** le domande, anche a quelle che sembrano "
+        "troppo facili o troppo difficili."
+    )
+    st.markdown(
+        "| Punteggio | Quando sceglierlo |\n|---|---|\n"
+        "| **0 · Non è in grado** | il comportamento non è possibile (per una condizione fisica o perché non se ne ha la capacità) |\n"
+        "| **1 · Mai o quasi mai quando è necessario** | si sarebbe capaci, ma non lo si fa mai o quasi mai, oppure non lo si fa senza che qualcuno lo ricordi |\n"
+        "| **2 · Qualche volta quando è necessario** | si è capaci, ma lo si fa solo qualche volta, o a volte serve che venga ricordato |\n"
+        "| **3 · Sempre o quasi sempre quando è necessario** | si è capaci e lo si fa sempre o quasi sempre senza bisogno di promemoria |"
+    )
+    st.markdown(
+        "Spunta **Suppongo** quando la risposta è una supposizione: per esempio se la situazione non si è mai "
+        "presentata o non c'è stata l'occasione di osservare il comportamento."
+    )
+
+
+def _protocollo_abas(chiave, stato):
+    aree = [a for a in AREE_ABAS if a != "lavoro" or stato['ha_lavoro']]
+    mancanti = 0
+    for area in aree:
+        info = AREE_ABAS[area]
+        st.subheader(f"{info['label']} ({info['dominio']})")
+        for i, item in enumerate(info['items']):
+            col_radio, col_supp = st.columns([4, 1])
+            with col_radio:
+                val = st.radio(
+                    f"{i+1}. {item}",
+                    options=list(OPZIONI_ABAS.keys()),
+                    format_func=lambda x: f"{x} · {OPZIONI_ABAS[x]}",
+                    index=None,
+                    key=f"{chiave}_{area}_{i}",
+                    horizontal=True,
+                    on_change=on_change_test,
+                    args=(chiave,)
+                )
+                stato['risposte'][area][i] = val
+                mancanti += val is None
+            with col_supp:
+                supp = st.checkbox("Suppongo", key=f"{chiave}_supp_{area}_{i}",
+                                   on_change=on_change_test, args=(chiave,))
+                stato['suppongo'][area][i] = supp
+    if mancanti:
+        st.warning(f"Ci sono ancora {mancanti} domande senza risposta.")
+    else:
+        st.success("Tutte le domande hanno una risposta.")
+
+
+
+def _protocollo_abas_libretto(chiave, stato, struttura, testi):
+    """Libretti Genitore/Insegnante: stessa grafica del protocollo adulto, aree indicate per sigla."""
+    stato.setdefault('risposte', {sigla: [None] * n for sigla, _, _, n in struttura})
+    stato.setdefault('suppongo', {sigla: [False] * n for sigla, _, _, n in struttura})
+    mancanti = 0
+    for sigla, nome, dominio, n in struttura:
+        if sigla == "lav" and not stato['ha_lavoro']:
+            continue
+        st.subheader(f"{nome} ({dominio})" if sigla != "lav" else nome)
+        for i, item in enumerate(testi[sigla]):
+            col_radio, col_supp = st.columns([4, 1])
+            with col_radio:
+                val = st.radio(f"{i+1}. {item}", options=list(OPZIONI_ABAS.keys()),
+                               format_func=lambda x: f"{x} · {OPZIONI_ABAS[x]}", index=None,
+                               key=f"{chiave}_{sigla}_{i}", horizontal=True,
+                               on_change=on_change_test, args=(chiave,))
+                stato['risposte'][sigla][i] = val
+                mancanti += val is None
+            with col_supp:
+                stato['suppongo'][sigla][i] = st.checkbox("Suppongo", key=f"{chiave}_supp_{sigla}_{i}",
+                                                          on_change=on_change_test, args=(chiave,))
+    if mancanti:
+        st.warning(f"Ci sono ancora {mancanti} domande senza risposta.")
+    else:
+        st.success("Tutte le domande hanno una risposta.")
+
+
 # ── ABAS-II ───────────────────────────────────────────────────────────────────
 @st.fragment
 def sezione_abas(data_nascita):
     with st.expander("Questionario ABAS-II (Adaptive Behavior Assessment System) — Eterovalutazione"):
-        st.info(
-            "Questo questionario viene compilato da un familiare o caregiver che conosce bene il soggetto. "
-            "Per ogni abilità, indica se il soggetto la svolge e con quale frequenza. "
-            "Spunta 'Suppongo' se non hai osservato direttamente il comportamento ma pensi che il soggetto sappia farlo."
-        )
-
+        st.info("Questo questionario viene compilato da un familiare o caregiver che conosce bene il soggetto.")
         eta_abas = int((datetime.date.today() - data_nascita).days / 365.25)
         fascia = fascia_eta(eta_abas)
-
-        if fascia is None:
-            st.warning(f"L'età del soggetto ({eta_abas} anni) è fuori dall'intervallo supportato (16–74 anni). Il questionario non verrà calcolato.")
+        if fascia is None or fascia == "75-89":
+            st.warning(f"L'età del soggetto ({eta_abas} anni) è fuori dall'intervallo dell'eterovalutazione (16–74 anni). Il questionario non verrà calcolato.")
             return
-
-        st.session_state.risposte['abas']['eta'] = eta_abas
-        if fascia != "16-21":
-            st.info(f"Età rilevata: {eta_abas} anni (fascia {fascia}). I punteggi compositi (GAC, DAC, DAS, DAP) sono calcolati per tutte le fasce 16–74 con tavole trascritte dal manuale. Se nel risultato compare un avviso, per quella fascia le tavole non sono ancora tutte verificate.")
-
+        stato = st.session_state.risposte['abas']
+        stato['eta'] = eta_abas
         ha_lavoro = st.radio(
             "Il soggetto svolge attualmente un'attività lavorativa?",
             options=["No", "Sì"], key="abas_lavoro", horizontal=True,
             on_change=on_change_test, args=('abas',)
         )
-        st.session_state.risposte['abas']['ha_lavoro'] = (ha_lavoro == "Sì")
-
-        aree_da_mostrare = list(AREE_ABAS.keys())
-        if not st.session_state.risposte['abas']['ha_lavoro']:
-            aree_da_mostrare = [a for a in aree_da_mostrare if a != "lavoro"]
-
-        for area in aree_da_mostrare:
-            info = AREE_ABAS[area]
-            st.subheader(f"{info['label']} ({info['dominio']})")
-            for i, item in enumerate(info['items']):
-                col_radio, col_supp = st.columns([4, 1])
-                with col_radio:
-                    val = st.radio(
-                        f"{i+1}. {item}",
-                        options=list(OPZIONI_ABAS.keys()),
-                        format_func=lambda x: OPZIONI_ABAS[x],
-                        key=f"abas_{area}_{i}",
-                        horizontal=True,
-                        on_change=on_change_test,
-                        args=('abas',)
-                    )
-                    st.session_state.risposte['abas']['risposte'][area][i] = val
-                with col_supp:
-                    supp = st.checkbox(
-                        "Suppongo",
-                        key=f"abas_supp_{area}_{i}",
-                        on_change=on_change_test,
-                        args=('abas',)
-                    )
-                    st.session_state.risposte['abas']['suppongo'][area][i] = supp
+        stato['ha_lavoro'] = (ha_lavoro == "Sì")
+        _legenda_abas("il soggetto lo mette in atto")
+        _protocollo_abas('abas', stato)
 
 sezione_abas(data_nascita)
 
@@ -530,41 +581,23 @@ sezione_abas(data_nascita)
 @st.fragment
 def sezione_abas_autovalutazione(data_nascita):
     with st.expander("Questionario ABAS-II — Autovalutazione adulto (16-89)"):
-        st.info(
-            "Questa sezione è compilata direttamente dall'adulto che si autovaluta. "
-            "Inserire il **punteggio grezzo totale** di ciascuna subscala dal protocollo cartaceo."
-        )
+        st.info("Questa sezione è compilata direttamente da te. Le domande parlano del \"soggetto\": in questo caso il soggetto sei tu.")
         eta = int((datetime.date.today() - data_nascita).days / 365.25)
         fascia = fascia_eta(eta)
         if fascia is None:
             st.warning(f"Età {eta} anni fuori dall'intervallo 16–89. Non calcolabile.")
             return
-        st.session_state.risposte['abas_auto']['eta'] = eta
-        st.info(f"Età: {eta} anni — fascia {fascia}")
-
-        ha_lav = st.radio("Il soggetto svolge attività lavorativa?",
-                          ["No", "Sì"], key="abas_auto_ha_lavoro", horizontal=True,
-                          on_change=on_change_test, args=('abas_auto',))
-        st.session_state.risposte['abas_auto']['ha_lavoro'] = (ha_lav == "Sì")
-
-        _SUBS_AUTO = [
-            ("co", "Comunicazione (Co)", 75),
-            ("am", "Uso dell'ambiente (Am)", 72),
-            ("sco", "Competenze scolastiche (Sco)", 81),
-            ("vc", "Vita a casa (VC)", 69),
-            ("ss", "Salute e sicurezza (SS)", 60),
-            ("tl", "Tempo libero (TL)", 69),
-            ("cur", "Cura di sé (Cur)", 75),
-            ("ac", "Autocontrollo (Ac)", 75),
-            ("soc", "Socializzazione (Soc)", 69),
-            ("lav", "Lavoro (Lav)", 72),
-        ]
-        for sub, label, max_v in _SUBS_AUTO:
-            if sub == "lav" and not st.session_state.risposte['abas_auto']['ha_lavoro']:
-                continue
-            val = st.number_input(label, min_value=0, max_value=max_v, step=1,
-                                  key=f"abas_auto_{sub}", on_change=on_change_test, args=('abas_auto',))
-            st.session_state.risposte['abas_auto']['grezzi'][sub] = val
+        stato = st.session_state.risposte['abas_auto']
+        stato['eta'] = eta
+        if fascia == "75-89":
+            stato['ha_lavoro'] = False
+        else:
+            ha_lav = st.radio("Svolgi attualmente un'attività lavorativa?",
+                              ["No", "Sì"], key="abas_auto_ha_lavoro", horizontal=True,
+                              on_change=on_change_test, args=('abas_auto',))
+            stato['ha_lavoro'] = (ha_lav == "Sì")
+        _legenda_abas("lo metti in atto")
+        _protocollo_abas('abas_auto', stato)
 
 sezione_abas_autovalutazione(data_nascita)
 
@@ -614,39 +647,36 @@ sezione_abas_insegnante(data_nascita)
 @st.fragment
 def sezione_abas_genitore(data_nascita):
     with st.expander("Questionario ABAS-II — Forma Genitore (17-21)"):
-        st.info(
-            "Questa sezione è compilata da un genitore o tutore. "
-            "Inserire il **punteggio grezzo totale** di ciascuna subscala dal protocollo cartaceo."
-        )
         eta = int((datetime.date.today() - data_nascita).days / 365.25)
         if not (17 <= eta <= 21):
             st.warning(f"Età {eta} anni: la forma Genitore è normata per 17–21 anni.")
             return
-        st.session_state.risposte['abas_gen']['eta'] = eta
+        stato = st.session_state.risposte['abas_gen']
+        stato['eta'] = eta
 
-        ha_lav = st.radio("Compilare subscala Lavoro?",
+        ha_lav = st.radio("Il ragazzo/la ragazza ha un lavoro part-time o a tempo pieno?",
                           ["No", "Sì"], key="abas_gen_ha_lavoro", horizontal=True,
                           on_change=on_change_test, args=('abas_gen',))
-        st.session_state.risposte['abas_gen']['ha_lavoro'] = (ha_lav == "Sì")
+        stato['ha_lavoro'] = (ha_lav == "Sì")
 
-        _SUBS_GEN = [
-            ("co",  "Comunicazione (Co)", 72),
-            ("am",  "Uso dell'ambiente (Am)", 69),
-            ("sco", "Competenze scolastiche (Sco)", 69),
-            ("vc",  "Vita a casa (VC)", 75),
-            ("ss",  "Salute e sicurezza (SS)", 66),
-            ("tl",  "Tempo libero (TL)", 66),
-            ("cur", "Cura di sé (Cur)", 72),
-            ("ac",  "Autocontrollo (Ac)", 75),
-            ("soc", "Socializzazione (Soc)", 69),
-            ("lav", "Lavoro (Lav)", 63),
-        ]
-        for sub, label, max_v in _SUBS_GEN:
-            if sub == "lav" and not st.session_state.risposte['abas_gen']['ha_lavoro']:
+        if ITEM_GENITORE:
+            st.info("Questo questionario viene compilato da un genitore o da chi si prende cura del ragazzo/della ragazza.")
+            _legenda_abas("il ragazzo/la ragazza lo mette in atto")
+            _protocollo_abas_libretto('abas_gen', stato, AREE_GENITORE, ITEM_GENITORE)
+            return
+
+        st.info(
+            "Questa sezione è compilata da un genitore o tutore. "
+            "Inserire il **punteggio grezzo totale** di ciascuna subscala dal protocollo cartaceo."
+        )
+        for sigla, nome, _, n in AREE_GENITORE:
+            if sigla == "lav" and not stato['ha_lavoro']:
                 continue
-            val = st.number_input(label, min_value=0, max_value=max_v, step=1,
-                                  key=f"abas_gen_{sub}", on_change=on_change_test, args=('abas_gen',))
-            st.session_state.risposte['abas_gen']['grezzi'][sub] = val
+            sig = {"co": "Co", "am": "Am", "sco": "Sco", "vc": "VC", "ss": "SS", "tl": "TL",
+                   "cur": "Cur", "ac": "Ac", "soc": "Soc", "lav": "Lav"}[sigla]
+            val = st.number_input(f"{nome} ({sig})", min_value=0, max_value=n * 3, step=1,
+                                  key=f"abas_gen_{sigla}", on_change=on_change_test, args=('abas_gen',))
+            stato['grezzi'][sigla] = val
 
 sezione_abas_genitore(data_nascita)
 
